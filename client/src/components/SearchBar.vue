@@ -1,0 +1,96 @@
+<template>
+  <div id="search-bar">
+    <input
+      id="search-input"
+      ref="search"
+      v-model="searchInput"
+      placeholder="意味の知りたい語句"
+    />
+    <button
+      id="search-button"
+      class="highlight-bg"
+      @click="search"
+      :disabled="disabled">検索</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SearchBar',
+  data() {
+    return {
+      searchInput: '',
+    }
+  },
+  props: {
+    disabled: Boolean
+  },
+  mounted() {
+    this.focusInput();
+  },
+  methods: {
+    focusInput() {
+      this.$refs.search.focus();
+    },
+    search() {
+      this.$emit('search-word', this.$data.searchInput);
+    }
+  },
+  emits: ['search-word']
+}
+</script>
+
+<style scoped>
+#search-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+#search-input, #search-button {
+  display: inline-block;
+  font-size: 20px;
+  border-radius: 0;
+  -webkit-appearance: none;
+  font-family: inherit;
+}
+
+#search-input {
+  width: 100%;
+  padding: 0px 10px;
+  border: 1px solid #aab6c2;
+  border-right: none;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+#search-input:focus {
+  outline: none;
+}
+
+#search-button {
+  width: 100px;
+  color: white;
+  border: 1px solid #b06bff;
+  border-left: none;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+#search-button:hover {
+  border: 1px solid #a352ff;
+  border-left: none;
+  background: #a352ff;
+  cursor: pointer;
+}
+
+#search-button:disabled {
+  cursor: auto;
+  background: #f3f3f3;
+  color: gray;
+  border: 1px solid #aab6c2;
+  border-left: none;
+}
+</style>

@@ -1,0 +1,5 @@
+{
+    "jmdictLocation": "./jmdict-eng-3.1.0.json",
+    "port": 3080,
+    "useIndexFile": true
+}
