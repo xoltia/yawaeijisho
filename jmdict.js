@@ -1,4 +1,10 @@
 const fs = require('fs');
+const {
+    kanaStringCompare,
+    kanjiStringCompare,
+    kanaStringStartsWith,
+    kanjiStringStartsWith
+} = require('./stringCompare');
 /* IMPORTANT!
  * Indexes should be located using original JMDict word data and NOT words list!
  * This allows for changing the structure of data in the words list without affecting how
@@ -102,9 +108,8 @@ function buildIndices(storeIndices=false) {
                 kanaIndex.push([text, index]);
         };
     
-        // TODO: Takes a very long time any other way to handle?
-        kanjiIndex.sort((k1, k2) => k1[0].localeCompare(k2[0], 'ja'));
-        kanaIndex.sort((k1, k2) => k1[0].localeCompare(k2[0], 'ja'));
+        kanjiIndex.sort((k1, k2) => kanjiStringCompare(k1[0], k2[0]));
+        kanaIndex.sort((k1, k2) => kanaStringCompare(k1[0], k2[0]));
         
         if (storeIndices) {
             fs.writeFileSync('./kanjiIndexSorted.json', JSON.stringify(kanjiIndex));
@@ -112,8 +117,8 @@ function buildIndices(storeIndices=false) {
         }
     }
 
-    module.exports.searchKanji = createSearchFunction(kanjiIndex);
-    module.exports.searchKana = createSearchFunction(kanaIndex);
+    module.exports.searchKanji = createSearchFunction(kanjiIndex, kanjiStringStartsWith);
+    module.exports.searchKana = createSearchFunction(kanaIndex, kanaStringStartsWith);
 }
 
 /* Helper functions */
@@ -150,13 +155,13 @@ function buildIndices(storeIndices=false) {
  * @param {String} key Key to search for
  * @returns {Array<Number>} All indices where an entry with the specified key can be found
  */
-function binarySearchIndex(index, key) {
+function binarySearchIndex(index, key, compareFunc) {
     let start = 0;
     let end = index.length - 1;
 
     while (start <= end) {
         const mid = Math.floor((start + end) / 2);
-        const diff = index[mid][0].localeCompare(key, 'ja');
+        const diff = compareFunc(index[mid][0], key);
 
         if (diff < 0)
             start = mid + 1;
@@ -169,13 +174,15 @@ function binarySearchIndex(index, key) {
 
             while (firstInstance > 0) {
                 // If previous element isn't duplicate break
-                if (index[firstInstance - 1][0] !== key) break;
+                if (compareFunc(index[firstInstance - 1][0], key) !== 0)
+                    break;
                 firstInstance--;
             }
             
             while (lastInstance < (index.length - 1)) {
                 // If next element isn't duplicate break
-                if (index[lastInstance + 1][0] !== key) break;
+                if (compareFunc(index[lastInstance][0], key) !== 0)
+                    break;
                 lastInstance++;
             }
 
@@ -192,9 +199,9 @@ function binarySearchIndex(index, key) {
  * @param {Array<[String, Number]>} index Index array used by the search function
  * @returns {function(String): []} The search function
  */
-function createSearchFunction(index) {
+function createSearchFunction(index, compareFunc) {
     return (word) =>
-        binarySearchIndex(index, word).map(i => words[i]);
+        binarySearchIndex(index, word, compareFunc).map(i => words[i]);
 }
 
 /* Exports */
