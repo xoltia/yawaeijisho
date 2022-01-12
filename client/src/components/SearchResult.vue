@@ -1,5 +1,3 @@
-<!-- TODO: COMPONENTS -->
-
 <template>
   <div class="sense-container" v-for="sense in word.senses" :key="sense.writings">
     <Writing v-for="writing in sense.writings"

@@ -14,7 +14,7 @@ const {
 let jmdict;
 let words = [];
 
-/* TODO: PARTIAL SEARCH AND WILDCARDS */
+/* TODO: Wildcards */
 
 /**
  * Loads JMDict for use, also sets module.exports.tags

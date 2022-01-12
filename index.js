@@ -2,8 +2,6 @@ require('dotenv').config();
 const path = require('path');
 const jmdict = require('./jmdict');
 
-/* TODO: serve built files when set to production mode */
-
 console.log('Loading JMDict file...');
 jmdict.loadJmdict(process.env.JMDICT_LOCATION);
 console.log('Building word list...');
