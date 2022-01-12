@@ -187,7 +187,12 @@ function binarySearchIndex(index, key, compareFunc) {
             }
 
             // Return index of each entry
-            return index.slice(firstInstance, lastInstance).map(entry => entry[1]);
+            return [
+                ...new Set(index
+                    .slice(firstInstance, lastInstance)
+                    .map(entry => entry[1])
+                )
+            ];
         }
     }
     // If the key was not found return blank array, meaning no index
