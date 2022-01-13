@@ -140,7 +140,7 @@ function kanjiStringCompare(referenceString, compareString) {
 /**
  * Takes a function which compares strings for an exact match and returns a function which
  * compares strings for whether the reference string starts with the comparison string
- * @param {CompAri} compareFunc 
+ * @param {function(String, String): Number} compareFunc 
  * @returns {function(String, String): Number}
  */
 function createStartsWithFunc(compareFunc) {
