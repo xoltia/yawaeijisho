@@ -79,8 +79,7 @@ function isKurikaeshiKigou(charCode) {
 function createComparableChars(str) {
     var buf = new ArrayBuffer(str.length * 2);
     var finalChars = new Uint16Array(buf);
-
-    // TODO: Update to use ONLY char codes, also use map instead of loop?
+    
     for (let i = 0; i < str.length; i++) {
         let charCode = str.charCodeAt(i);
 
