@@ -45,7 +45,7 @@ export default {
 <style scoped>
 .sense-container {
   text-align: left;
-  margin-top: 15px;
+  margin: 15px 0;
   padding-bottom: 10px;
   border-bottom: 1px solid #d0dbe6;
 }

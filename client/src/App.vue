@@ -6,13 +6,14 @@
     @search-word="searchWord"
     :disabled="loadingWords"
   />
-  <Loader v-if="loadingWords"/>
-  <SearchResult v-else
+  <SearchResult
     v-for="word in words"
     :key="word.id"
     :word="word"
     :tagData="tagData"
   />
+  <button v-if="hasNextPage" id="next-pg-btn"  @click="loadNextPage()">もっと見る</button>
+  <Loader v-if="loadingWords"/>
 </template>
 
 <script>
@@ -27,6 +28,10 @@ export default {
       words: [],
       loadingWords: false,
       tagData: {},
+      lastSearch: null,
+      page: 1,
+      pageSize: 25,
+      totalPages: 0
     }
   },
   components: {
@@ -35,14 +40,53 @@ export default {
     Loader
   },
   async mounted() {
-      const response = await fetch(`/api/tags`);
-      this.tagData = await response.json();
+    const response = await fetch(`/api/tags`);
+    this.tagData = await response.json();
+  },
+  computed: {
+    hasNextPage() {
+      // There must have been a previous full search, no current search being done, and there must still be more pages
+      return this.lastSearch &&
+             !this.loadingWords &&
+             this.page < this.totalPages;
+    }
   },
   methods: {
+    async getWordsCount(word) {
+      const response = await fetch(`/api/count/${word}`);
+      return response.json();
+    },
+    async getWords(word) {
+      // The API considers page 0 to be the first page
+      const response = await fetch(`/api/define/${word}?page=${this.page - 1}&size=${this.pageSize}`);
+      return response.json();
+    },
     async searchWord(word) {
+      // Reset state so old results don't show while loading
+      this.page = 1;
+      this.words = [];
       this.loadingWords = true;
-      const response = await fetch(`/api/define/${word}`)
-      this.words = await response.json();
+
+      // See how many total matches there are and determine how many possible pages there are
+      const wordsCount = await this.getWordsCount(word);
+      this.totalPages = Math.ceil(wordsCount / this.pageSize);
+      // Reset words array
+      this.words = await this.getWords(word);
+      // Keep track of the last full search so that the next page method knows what to search
+      this.lastSearch = word;
+
+      this.loadingWords = false;
+    },
+    async loadNextPage() {
+      // Increase page count and show loading
+      this.page += 1;
+      this.loadingWords = true;
+
+      // Research the word now that the page number has changed
+      const nextPage = await this.getWords(this.lastSearch);
+      // Combine the old results with the next page
+      this.words = [...this.words, ...nextPage];
+      // Stop showing as loading
       this.loadingWords = false;
     }
   }
@@ -73,6 +117,15 @@ export default {
 
 .highlight-bg {
   background: #b06bff;
+}
+
+#next-pg-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #b06bff;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 @media (max-width: 1100px) {
