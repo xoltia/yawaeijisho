@@ -6,7 +6,7 @@ const {
     kanjiStringStartsWith
 } = require('./stringCompare');
 /* IMPORTANT!
- * Indexes should be located using original JMDict word data and NOT words list!
+ * Indices should be located using original JMDict word data and NOT words list!
  * This allows for changing the structure of data in the words list without affecting how
  * indexing works. However, this means that the words list should map one-to-one with the
  * original list and the order should not be altered!

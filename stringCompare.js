@@ -1,7 +1,10 @@
 const HIR_START = 'ぁ'.charCodeAt();
 const HIR_END = 'ゖ'.charCodeAt();
 const KAT_START = 'ァ'.charCodeAt();
-const KOKAKIMOHJI_MAP = {
+const CHOUONPU = 'ー'.charCodeAt();
+const KURIKAESHIKIGOU = 'ゝ'.charCodeAt();
+const KAT_KURIKAESHIKIGOU = 'ヽ'.charCodeAt();
+const KOKAKIMOHJI_MAP = createCharCodeMap({
     'ァ': 'ア',
     'ィ': 'イ',
     'ゥ': 'ウ',
@@ -13,9 +16,9 @@ const KOKAKIMOHJI_MAP = {
     'ョ': 'ヨ',
 
     'ヮ': 'ワ' // Only appears in like 3 words?
-};
+});
 
-const ONBIKI_MAP = {
+const ONBIKI_MAP = createCharCodeMap({
     'ア': 'ア',  'イ': 'イ',  'ウ': 'ウ',  'エ': 'エ',  'オ': 'オ',
                               'ヴ': 'ウ',
 
@@ -43,48 +46,58 @@ const ONBIKI_MAP = {
     'ワ': 'ア',  'ヰ': 'イ',                            'ヲ': 'オ',    // W
 
     'ン': 'ン',
+});
+
+/**
+ * Create a map with UTF-16 char code keys and values from an object
+ * @param {Object} obj
+ * @returns {Map<Number, Number>} 
+ */
+function createCharCodeMap(obj) {
+    return new Map(
+        Object.entries(obj).map(([k, v]) =>
+            [k.charCodeAt(), v.charCodeAt()]
+        )
+    );
 };
 
 /**
  * Whether kana is a kurikaeshi character
- * @param {String} char 
+ * @param {Number} charCode
  * @returns {Boolean}
  */
-function isKurikaeshiKigou(char) {
-    return char === 'ゝ' || char === 'ヽ' ||
-           char === 'ゞ' || char === 'ヾ';
+function isKurikaeshiKigou(charCode) {
+    return charCode === KURIKAESHIKIGOU || charCode === KURIKAESHIKIGOU + 1 ||
+           charCode === KAT_KURIKAESHIKIGOU || charCode === KAT_KURIKAESHIKIGOU + 1;
 };
 
 /**
  * Creates kana string for comparison
  * @param {*} str
- * @returns {Array}
+ * @returns {Uint16Array}
  */ 
 function createComparableChars(str) {
-    let finalChars = new Array(str.length);
-    
+    var buf = new ArrayBuffer(str.length * 2);
+    var finalChars = new Uint16Array(buf);
+
     // TODO: Update to use ONLY char codes, also use map instead of loop?
     for (let i = 0; i < str.length; i++) {
-        let char = str.charAt(i);
         let charCode = str.charCodeAt(i);
 
-        if (charCode >= HIR_START && charCode <= HIR_END) {
-            // Convert all hiragana characters to katakana
+        // Convert all hiragana characters to katakana
+        if (charCode >= HIR_START && charCode <= HIR_END)
             charCode = charCode + (KAT_START - HIR_START);
-            char = String.fromCharCode(charCode);
-        }
 
-        if (char in KOKAKIMOHJI_MAP) {
-            // If small character, find normal version from map
-            finalChars[i] = KOKAKIMOHJI_MAP[char].charCodeAt();  
-        } else if (char === 'ー' && i > 0) {
-            finalChars[i] = ONBIKI_MAP[String.fromCharCode(finalChars[i - 1])].charCodeAt();
-        } else if (isKurikaeshiKigou(char) && i > 0) {
-            // If char code is even then it is the dakuten character
+        // If small character, find normal version from map
+        if (KOKAKIMOHJI_MAP.has(charCode))
+            finalChars[i] = KOKAKIMOHJI_MAP.get(charCode);  
+        else if (charCode === CHOUONPU && i > 0)
+            finalChars[i] = ONBIKI_MAP.get(finalChars[i - 1]);
+        // If char code is even then it is the dakuten character
+        else if (isKurikaeshiKigou(charCode) && i > 0)
             finalChars[i] = finalChars[i - 1] + (charCode % 2 === 0);
-        } else {
+        else
             finalChars[i] = charCode;
-        }
     }
 
     return finalChars;
@@ -116,19 +129,6 @@ function kanaStringCompare(referenceString, compareString) {
 }
 
 /**
- * Check if the reference kana string starts with the string being compared 
- * @param {String} referenceString String being checked
- * @param {String} compareString Suffix being looked for
- * @returns {Number}
- */
- function kanaStringStartsWith(referenceString, compareString) {
-    const refLength = referenceString.length;
-    const compLength = compareString.length;
-    const refStringBeginning = referenceString.slice(0, Math.min(refLength, compLength));
-    return kanaStringCompare(refStringBeginning, compareString);
-}
-
-/**
  * Checks if two kanji strings are the same
  * @param {String} referenceString Reference kana string
  * @param {String} compareString Comparison kana string
@@ -139,22 +139,26 @@ function kanjiStringCompare(referenceString, compareString) {
 }
 
 /**
- * Check if the reference kanji string strarts with the string being compared 
- * @param {String} referenceString String being checked
- * @param {String} compareString Suffix being looked for
- * @returns {Number}
+ * Takes a function which compares strings for an exact match and returns a function which
+ * compares strings for whether the reference string starts with the comparison string
+ * @param {function(String, String): Number} compareFunc 
+ * @param {String} referenceString 
+ * @param {String} compareString
+ * @returns {function(String, String): Number}
  */
-function kanjiStringStartsWith(referenceString, compareString) {
-    const refLength = referenceString.length;
-    const compLength = compareString.length;
-    const refStringBeginning = referenceString.slice(0, Math.min(refLength, compLength));
-    return kanjiStringCompare(refStringBeginning, compareString, 'ja');
+function createStartsWithFunc(compareFunc) {
+    return (referenceString, compareString) => {
+        const refLength = referenceString.length;
+        const compLength = compareString.length;
+        const refStringBeginning = referenceString.slice(0, Math.min(refLength, compLength));
+        return compareFunc(refStringBeginning, compareString);
+    }
 }
 
 
 module.exports = {
     kanaStringCompare,
-    kanaStringStartsWith,
+    kanaStringStartsWith: createStartsWithFunc(kanaStringCompare),
     kanjiStringCompare,
-    kanjiStringStartsWith,
+    kanjiStringStartsWith: createStartsWithFunc(kanjiStringCompare),
 };

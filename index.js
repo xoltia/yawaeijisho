@@ -68,8 +68,8 @@ jmdict.loadJmdict(process.env.JMDICT_LOCATION);
 console.log('Building word list...');
 jmdict.buildWordList();
 console.log(process.env.USE_INDEX_FILE === 'true' ?
-    'Loading indices (this while take a while on the first run)...' :
-    'Building indices (this while take some time)...'
+    'Loading indices (this will take a while on the first run)...' :
+    'Building indices (this will take some time)...'
 );
 jmdict.buildIndices(process.env.USE_INDEX_FILE === 'true');
 console.log("JMDict module ready");
