@@ -50,7 +50,7 @@ const ONBIKI_MAP = createCharCodeMap({
 
 /**
  * Create a map with UTF-16 char code keys and values from an object
- * @param {Object} obj
+ * @param {Object<string, string>} obj
  * @returns {Map<Number, Number>} 
  */
 function createCharCodeMap(obj) {
@@ -72,8 +72,8 @@ function isKurikaeshiKigou(charCode) {
 };
 
 /**
- * Creates kana string for comparison
- * @param {*} str
+ * Creates array of character codes for comparison
+ * @param {String} str
  * @returns {Uint16Array}
  */ 
 function createComparableChars(str) {
@@ -110,7 +110,6 @@ function createComparableChars(str) {
  * For ex. は != ぱ
  * @param {String} referenceString Reference kana string
  * @param {String} compareString Comparison kana string
- * @param {Number?} cutoff Number to stop comparison at, defulats to shortest string length (full comparison)
  * @returns {Number} Negative if A occurs before B, positive if B after A, and 0 if A = B
  */
 function kanaStringCompare(referenceString, compareString) {
@@ -141,9 +140,7 @@ function kanjiStringCompare(referenceString, compareString) {
 /**
  * Takes a function which compares strings for an exact match and returns a function which
  * compares strings for whether the reference string starts with the comparison string
- * @param {function(String, String): Number} compareFunc 
- * @param {String} referenceString 
- * @param {String} compareString
+ * @param {CompAri} compareFunc 
  * @returns {function(String, String): Number}
  */
 function createStartsWithFunc(compareFunc) {

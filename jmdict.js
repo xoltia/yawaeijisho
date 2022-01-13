@@ -153,6 +153,7 @@ function buildIndices(storeIndices=false) {
  * Uses binary search to find appropriate key. Once a location is found, it searches for duplicates
  * @param {Array<[String, Number]>} index Index array to search where each element is an array containing a key-index pair
  * @param {String} key Key to search for
+ * @param {function(String, String): Number} compareFunc
  * @returns {Array<Number>} All indices where an entry with the specified key can be found
  */
 function binarySearchIndex(index, key, compareFunc) {
@@ -202,7 +203,8 @@ function binarySearchIndex(index, key, compareFunc) {
 /**
  * Creates a function which searches for a word from the provided index
  * @param {Array<[String, Number]>} index Index array used by the search function
- * @returns {function(String): []} The search function
+ * @param {function(String, String): Number} compareFunc
+ * @returns {function(String): Array} The search function
  */
 function createSearchFunction(index, compareFunc) {
     return (word) =>
