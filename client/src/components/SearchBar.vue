@@ -37,7 +37,7 @@ export default {
       this.$refs.search.focus();
     },
     search() {
-      if (this.disabled)
+      if (this.disabled || this.searchInput.length === 0)
         return;
       this.$emit('search-word', this.$data.searchInput);
     }
