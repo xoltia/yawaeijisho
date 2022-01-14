@@ -4,6 +4,7 @@
       id="search-input"
       ref="search"
       v-model="searchInput"
+      @keyup.enter="search"
       placeholder="意味の知りたい語句"
     />
     <button
@@ -33,6 +34,8 @@ export default {
       this.$refs.search.focus();
     },
     search() {
+      if (this.disabled)
+        return;
       this.$emit('search-word', this.$data.searchInput);
     }
   },
