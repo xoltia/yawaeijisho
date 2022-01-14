@@ -3,7 +3,7 @@
     <input
       id="search-input"
       ref="search"
-      v-model="searchInput"
+      v-model.lazy="searchInput"
       @keyup.enter="search"
       placeholder="意味の知りたい語句"
     />
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { bind as bindWanakana } from 'wanakana';
+
 export default {
   name: 'SearchBar',
   data() {
@@ -28,6 +30,7 @@ export default {
   },
   mounted() {
     this.focusInput();
+    bindWanakana(this.$refs.search);
   },
   methods: {
     focusInput() {
