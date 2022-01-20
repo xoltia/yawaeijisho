@@ -12,7 +12,7 @@
     :word="word"
     :tagData="tagData"
   />
-  <button v-if="hasNextPage" id="next-pg-btn"  @click="loadNextPage()">もっと見る</button>
+  <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">もっと見る</button>
   <Loader v-if="loadingWords"/>
 </template>
 

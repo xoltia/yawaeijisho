@@ -211,9 +211,24 @@ function createSearchFunction(index, compareFunc) {
         binarySearchIndex(index, word, compareFunc).map(i => words[i]);
 }
 
+/**
+ * Sets up JMDict module for use
+ * @param {String} jmdictLocation JMDict JSON data file location
+ * @param {Boolean} useIndexFile Whether or not to use existing index file (or create one if none found)
+ * @param {Boolean} logProgress Whether to log messages as each step is reached
+ */
+function setup(jmdictLocation, useIndexFile, logProgress=true) {
+    if (logProgress) console.log('Loading JMDict file...');
+    loadJmdict(jmdictLocation);
+    if (logProgress) console.log('Building word list...');
+    buildWordList();
+    if (logProgress) console.log(useIndexFile ?
+            'Loading indices (this will take a while on the first run)...' :
+            'Building indices (this will take some time)...'
+    );
+    buildIndices(useIndexFile);
+    if (logProgress) console.log("JMDict module ready");
+}
+
 /* Exports */
-module.exports = {
-    loadJmdict,
-    buildWordList,
-    buildIndices
-};
+module.exports = { setup };
