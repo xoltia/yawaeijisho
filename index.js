@@ -1,6 +1,6 @@
 require('dotenv').config();
 const path = require('path');
-const { setup } = require('./jmdict');
+const jmdict = require('./jmdict');
 const { search, count } = require('./api');
 
 const fastify = require('fastify')({
@@ -39,7 +39,7 @@ fastify.get('/api/define/:word', {
 });
 
 // Set up JMDict module before starting server or search functions will not work
-setup(
+jmdict.setup(
     process.env.JMDICT_LOCATION,
     process.env.USE_INDEX_FILE === 'true',
     process.env.env !== 'PRODUCTION'
