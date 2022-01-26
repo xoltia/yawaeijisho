@@ -4,12 +4,6 @@
  */
 
 const jmdict = require('./jmdict');
-const maxPageSize = process.env.MAX_PAGE_SIZE || 25;
-const defaultSearchOptions = {
-    page: 0,
-    size: maxPageSize
-};
-
 const cache = {};
 
 function getEntries(word) {
@@ -33,10 +27,7 @@ function count(word) {
 }
 
 function search(word, options) {
-    const {
-        page,
-        size
-    } = Object.assign({}, defaultSearchOptions, options);
+    const { page, size } = options;
 
     const entries = getEntries(word);
     const rangeStart = page * size;

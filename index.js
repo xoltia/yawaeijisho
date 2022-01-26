@@ -19,7 +19,7 @@ fastify.get('/api/tags', function(request, reply) {
 });
 
 fastify.get('/api/count/:word', function (request, reply) {
-    return count(request.params.word);
+    reply.send(count(request.params.word));
 });
 
 fastify.get('/api/define/:word', {
@@ -33,7 +33,7 @@ fastify.get('/api/define/:word', {
     // Page number
     const page = request.query.page || 0;
     // Page size, default to max page size if page not specified or if invalid size (<0)
-    const size = request.query.size && request.query.size > 0 ? request.query.size : maxPageSize;
+    const size = request.query.size && request.query.size > 0 ? request.query.size : (process.env.MAX_PAGE_SIZE || 25);
 
     reply.send(search(request.params.word, { page, size }));
 });
