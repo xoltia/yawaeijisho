@@ -12,6 +12,14 @@
     :word="word"
     :tagData="tagData"
   />
+  <span style="display: block" v-if="words.length > 0">
+    <text v-if="totalWordCount != words.length">
+      <b>{{ totalWordCount }}</b>語の言葉の中で<b>{{ words.length }}</b>語が表示されています
+    </text>
+    <text v-else>
+      すべての言葉が表示されています
+    </text>
+  </span>
   <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">もっと見る</button>
   <Loader v-if="loadingWords"/>
 </template>
@@ -31,7 +39,7 @@ export default {
       lastSearch: null,
       page: 1,
       pageSize: 25,
-      totalPages: 0
+      totalWordCount: 0
     }
   },
   components: {
@@ -49,7 +57,10 @@ export default {
       return this.lastSearch &&
              !this.loadingWords &&
              this.page < this.totalPages;
-    }
+    },
+    totalPages() {
+      return Math.ceil(this.totalWordCount / this.pageSize);
+    },
   },
   methods: {
     async getWordsCount(word) {
@@ -67,9 +78,8 @@ export default {
       this.words = [];
       this.loadingWords = true;
 
-      // See how many total matches there are and determine how many possible pages there are
-      const wordsCount = await this.getWordsCount(word);
-      this.totalPages = Math.ceil(wordsCount / this.pageSize);
+      // See how many total matches there are
+      this.totalWordCount = await this.getWordsCount(word);
       // Reset words array
       this.words = await this.getWords(word);
       // Keep track of the last full search so that the next page method knows what to search
