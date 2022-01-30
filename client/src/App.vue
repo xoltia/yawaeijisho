@@ -6,6 +6,11 @@
     @search-word="searchWord"
     :disabled="loadingWords"
   />
+  <Sentence
+    v-if="this.sentenceWords.length > 0 && !loadingWords"
+    :words="this.sentenceWords"
+    @search-word="searchWord"
+  />
   <SearchResult
     v-for="word in words"
     :key="word.id"
@@ -20,6 +25,9 @@
       すべての言葉が表示されています
     </text>
   </span>
+  <span v-if="this.errorMessage">
+    {{this.errorMessage}}
+  </span>
   <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">もっと見る</button>
   <Loader v-if="loadingWords"/>
 </template>
@@ -28,6 +36,7 @@
 import SearchBar from './components/SearchBar.vue';
 import SearchResult from './components/SearchResult.vue';
 import Loader from './components/Loader.vue';
+import Sentence from './components/Sentence.vue';
 
 export default {
   name: 'App',
@@ -39,13 +48,16 @@ export default {
       lastSearch: null,
       page: 1,
       pageSize: 25,
-      totalWordCount: 0
+      totalWordCount: 0,
+      sentenceWords: [],
+      errorMessage: ''
     }
   },
   components: {
     SearchBar,
     SearchResult,
-    Loader
+    Loader,
+    Sentence
   },
   async mounted() {
     const response = await fetch(`/api/tags`);
@@ -72,19 +84,62 @@ export default {
       const response = await fetch(`/api/define/${word}?page=${this.page - 1}&size=${this.pageSize}`);
       return response.json();
     },
-    async searchWord(word) {
+    async wakachi(sentence) {
+      const response = await fetch(`/api/wakachi/${sentence}`);
+      return response.json();
+    },
+    error(message) {
+      // Reset state
+      this.words = [];
+      this.sentenceWords = [];
+      this.lastSearch = '';
+      this.loadingWords = false;
+
+      // Show error message
+      this.errorMessage = message;
+    },
+    // Search word (or phrase if not found as word)
+    // Setting final to true means that the search will stop if not found as a single word
+    async searchWord(word, final=false) {
+      // API will not accept >250 length params
+      // Each kana/kanji character encoded = 9 length so max of 27 characters
+      if (encodeURIComponent(word).length > 250) {
+        return this.error('検索語句が長い過ぎます。２７文字以下にしてください');
+      }
       // Reset state so old results don't show while loading
       this.page = 1;
       this.words = [];
+      this.errorMessage = '';
       this.loadingWords = true;
 
       // See how many total matches there are
       this.totalWordCount = await this.getWordsCount(word);
       // Reset words array
       this.words = await this.getWords(word);
+
+      // Didn't find any words try to search as sentence
+      if (this.words.length === 0) {
+        // If this search is already comming from a sentence search then stop
+        if (final) {
+          return this.error('何も見つかりませんでした');
+        }
+
+        const words = await this.wakachi(word);
+        if (words.length === 0) {
+          this.loadingWords = false;
+          return;
+        }
+
+        this.sentenceWords = words;
+        this.loadingWords = false;
+        return;
+      } else {
+        // Clear sentence words once a single word is searched
+        this.sentenceWords = [];
+      }
+
       // Keep track of the last full search so that the next page method knows what to search
       this.lastSearch = word;
-
       this.loadingWords = false;
     },
     async loadNextPage() {
