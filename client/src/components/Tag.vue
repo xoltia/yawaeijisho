@@ -39,7 +39,7 @@ export default {
   min-width: 20px;
   border-radius: 5px;
   text-align: center;
-  font-size: 4px;
+  font-size: 10px;
   padding: 3px 5px;
   margin-right: 5px;
   color: white;
