@@ -1,6 +1,9 @@
 # Yawaeijisho
 Yet another Japanese-English dictionary
 
+<img src="https://i.imgur.com/eMzq9RV.png"
+     width="500">
+
 ## Planned and current features
 
 This project is an attempt to make a website similar to jisho.org but with some features that would be convenient to have.
