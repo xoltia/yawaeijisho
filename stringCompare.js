@@ -4,7 +4,7 @@ const KAT_START = 'ァ'.charCodeAt();
 const CHOUONKIGOU = 'ー'.charCodeAt();
 const KURIKAESHIKIGOU = 'ゝ'.charCodeAt();
 const KAT_KURIKAESHIKIGOU = 'ヽ'.charCodeAt();
-const KOKAKIMOHJI_MAP = createCharCodeMap({
+const KOKAKIMOJI_MAP = createCharCodeMap({
     'ァ': 'ア',
     'ィ': 'イ',
     'ゥ': 'ウ',
@@ -88,8 +88,8 @@ function createComparableChars(str) {
             charCode = charCode + (KAT_START - HIR_START);
 
         // If small character, find normal version from map
-        if (KOKAKIMOHJI_MAP.has(charCode))
-            finalChars[i] = KOKAKIMOHJI_MAP.get(charCode);  
+        if (KOKAKIMOJI_MAP.has(charCode))
+            finalChars[i] = KOKAKIMOJI_MAP.get(charCode);  
         else if (charCode === CHOUONKIGOU && i > 0)
             finalChars[i] = ONBIKI_MAP.get(finalChars[i - 1]);
         // If char code is even then it is the dakuten character
