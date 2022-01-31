@@ -1,8 +1,9 @@
 # Yawaeijisho
-Yet another Japanese-English dictionary
 
 <img src="https://i.imgur.com/eMzq9RV.png"
      width="500">
+     
+Yet another Japanese-English dictionary
 
 ## Planned and current features
 
