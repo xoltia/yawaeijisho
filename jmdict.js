@@ -44,7 +44,8 @@ function buildWordList() {
         // Tags which apply to a specific kana/kanji, not a specific sense
         const kanaTags = word.kana.reduce((dict, kana) => ({ ...dict, [kana.text]: kana.tags }), {});
         const kanjiTags = word.kanji.reduce((dict, kanji) => ({ ...dict, [kanji.text]: kanji.tags }), {});
-    
+        const common = word.kanji.some((k) => k.common) || word.kana.some((k) => k.common);
+
         for (let sense of word.sense) {
             let applKanji = sense.appliesToKanji;
             let applKana = sense.appliesToKana;
@@ -70,8 +71,6 @@ function buildWordList() {
                 ...sense.partOfSpeech,
                 ...sense.field,
                 ...sense.dialect,
-                //...applKana.flatMap((kana) => word.kana.find((k) => k.text === kana).tags),
-                //...applKanji.flatMap((kanji) => word.kanji.find((k) => k.text === kanji).tags),
             ];
     
             const gloss = sense.gloss.map((g) => g.text);
@@ -82,7 +81,7 @@ function buildWordList() {
             else
                 senses.push({writings, definitions: [{ tags, gloss }]});
         }
-        return { id: word.id, kanaTags, kanjiTags, senses };
+        return { id: word.id, kanaTags, kanjiTags, common, senses };
     });
 }
 

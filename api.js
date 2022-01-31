@@ -13,6 +13,16 @@ function getEntries(word) {
     const entries = /^[\u3040-\u309f\u30a0-\u30ff]+$/.test(word) ?
            jmdict.searchKana(word) :
            jmdict.searchKanji(word);
+
+    // TODO: Maybe this should be done when creating indexes?
+    entries.sort((a, b) => {
+        if (a.common && b.common)
+            return 0;
+        else if (a.common && !b.common)
+            return -1;
+        else
+            return 1;
+    });
     
     // Don't cache empty results
     if (entries.length === 0)
