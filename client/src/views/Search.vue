@@ -65,9 +65,8 @@ export default {
     this.tagData = await response.json();
 
     // Check query param for initial word search
-    if (this.$route.query.q) {
+    if (this.$route.query.q)
       await this.searchWord(this.$route.query.q);
-    }
   },
   computed: {
     hasNextPage() {

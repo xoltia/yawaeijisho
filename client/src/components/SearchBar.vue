@@ -22,7 +22,7 @@ export default {
   name: 'SearchBar',
   data() {
     return {
-      searchInput: '',
+      searchInput: this.$route.query.q ?? '',
     }
   },
   props: {
