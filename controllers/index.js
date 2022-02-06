@@ -1,9 +1,7 @@
-/**
- * This file contains functions which provide the main functionality of each API endpoint
- * registered in the main file
- */
+const jmdict = require('../jmdict');
+const { parse } = require('../mecab');
 
-const jmdict = require('./jmdict');
+// TODO: proper cache
 const cache = {};
 
 function getEntries(word) {
@@ -32,20 +30,30 @@ function getEntries(word) {
     return entries;
 }
 
-function count(word) {
-    return getEntries(word).length;
-}
+module.exports.tags = (_, res) => {
+    res.json(jmdict.tags);
+};
 
-function search(word, options) {
-    const { page, size } = options;
-
-    const entries = getEntries(word);
+module.exports.define =  (req, res) => {
+    const page = Number(req.query.page);
+    const size = Number(req.query.size);
+    const entries = getEntries(req.params.word);
     const rangeStart = page * size;
     const rangeEnd = (rangeStart < 0 ? entries.length + rangeStart : rangeStart) + size;
-    return entries.slice(rangeStart, rangeEnd);
-}
 
-module.exports = {
-    search,
-    count
+    res.json(entries.slice(rangeStart, rangeEnd));
+};
+
+module.exports.count = (req, res) => {
+    res.json(getEntries(req.params.word).length);
+};
+
+module.exports.wakachi = (req, res) => {
+    parse(req.params.phrase, (result) => {
+        const response = result.map(data => [
+            data[0],
+            data[1]['品詞'] == '記号' ? null : data[1]['原形']
+        ]);
+        res.json(response);
+    });
 };
