@@ -1,5 +1,4 @@
 require('dotenv').config();
-const path = require('path');
 
 const config = {
     jmdictLocation: process.env.JMDICT_LOCATION,
