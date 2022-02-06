@@ -37,8 +37,8 @@ app.get('/api/define/:word',
     query('size').isInt({ min: 1 }).default(process.env.MAX_PAGE_SIZE || 25),
     (req, res) => res.json(
         search(req.params.word, {
-            page: req.query.page,
-            size: req.query.size 
+            page: Number(req.query.page),
+            size: Number(req.query.size)
         })
     )
 );
