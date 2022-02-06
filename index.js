@@ -1,15 +1,15 @@
-require('dotenv').config();
 const express = require('express');
 const { query } = require('express-validator');
 const path = require('path');
 const jmdict = require('./jmdict');
 const { search, count } = require('./api');
 const { parse } = require('./mecab');
+const config = require('./config');
 
 const app = express();
 
 // If environment set to production serve built client files
-if (process.env.NODE_ENV === 'production') {
+if (config.isProduction) {
     app.use(express.static(path.join(__dirname, '/client/dist')));
 }
 
@@ -34,7 +34,7 @@ app.get('/api/count/:word',
 
 app.get('/api/define/:word', 
     query('page').isInt().default(0),
-    query('size').isInt({ min: 1 }).default(process.env.MAX_PAGE_SIZE || 25),
+    query('size').isInt({ min: 1 }).default(config.maxPageSize),
     (req, res) => res.json(
         search(req.params.word, {
             page: Number(req.query.page),
@@ -45,13 +45,13 @@ app.get('/api/define/:word',
 
 // Set up JMDict module before starting server or search functions will not work
 jmdict.setup(
-    process.env.JMDICT_LOCATION,
-    process.env.USE_INDEX_FILE === 'true',
-    process.env.env !== 'PRODUCTION'
+    config.jmdictLocation,
+    config.useIndexFile,
+    !config.isProduction
 );
 
 // Port must be 3080 to work with client when running from dev server
-app.listen(process.env.PORT || 3080, function(err) {
+app.listen(condif.port || 3080, function(err) {
     if (err) {
         fastify.log.error(err);
         process.exit(1);
