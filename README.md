@@ -38,12 +38,13 @@ Current prerequisites include
 - Properly configured environment variables
 
 ### Environment variables
-| Variable    | Description                                                            | Default                            |
-| ----------- | ---------------------------------------------------------------------- | ---------------------------------- | 
-| PORT        | Port which API server runs on (do not change if not production)        | 3080 (same as front-end dev proxy)
-| ENVIRONMENT | 'production' or 'dev'; Production serves static files from client\dist | dev
-| JMDICT_LOCATION | Location of JMDict file (important, will not run without) |
-| USE_INDEX_FILE  | Whether or not to save created indexes (kanji/kana search indexes) to a file for re-use. Recommended to speed up subsequent startups | false
+| Variable        | Description                                                                                                                          | Default              |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | 
+| PORT            | Port which API server runs on (do not change if not production)                                                                      | production: 80 <br> dev: 3080 (same as front-end dev proxy)
+| NODE_ENV        | 'production' or 'dev'; Production serves static files from client\dist                                                               | dev   |
+| JMDICT_LOCATION | Location of JMDict file (important, will not run without)                                                                            | None  |
+| USE_INDEX_FILE  | Whether or not to save created indexes (kanji/kana search indexes) to a file for re-use. Recommended to speed up subsequent startups | false |
+| MAX_PAGE_SIZE   | Maximum amount of words allowed to be returned by /api/define endpoint                                                               | 25    |
 
 ### Starting
 
