@@ -1,5 +1,6 @@
 const jmdict = require('../jmdict');
 const { parse } = require('../mecab');
+const { validationResult } = require('express-validator');
 
 // TODO: proper cache
 const cache = {};
@@ -34,7 +35,13 @@ module.exports.tags = (_, res) => {
     res.json(jmdict.tags);
 };
 
-module.exports.define =  (req, res) => {
+module.exports.define = (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const page = Number(req.query.page);
     const size = Number(req.query.size);
     const entries = getEntries(req.params.word);
