@@ -6,6 +6,17 @@ const routes = [
     path: '/',
     name: 'Search',
     component: Search
+  },
+  {
+    path: '/signin',
+    name: 'Signin',
+    component: () => import('../views/Signin.vue'),
+  },
+  {
+    path: '/signup',
+    name: 'Signup',
+    component: () => import('../views/Signin.vue'),
+    props: { isSignup: true }
   }
 ];
 

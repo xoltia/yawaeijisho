@@ -1,35 +1,38 @@
 <template>
-  <h1 class="title">
-    <text class="highlight">や</text>和英辞書
-  </h1>
-  <SearchBar
-    @search-word="searchWord"
-    :disabled="loadingWords"
-  />
-  <Sentence
-    v-if="this.sentenceWords.length > 0 && !loadingWords"
-    :words="this.sentenceWords"
-    @search-word="searchWord"
-  />
-  <SearchResult
-    v-for="word in words"
-    :key="word.id"
-    :word="word"
-    :tagData="tagData"
-  />
-  <span style="display: block" v-if="words.length > 0">
-    <text v-if="totalWordCount != words.length">
-      <b>{{ totalWordCount }}</b>語の言葉の中で<b>{{ words.length }}</b>語が表示されています
-    </text>
-    <text v-else>
-      すべての言葉が表示されています
-    </text>
-  </span>
-  <span v-if="this.errorMessage">
-    {{this.errorMessage}}
-  </span>
-  <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">もっと見る</button>
-  <Loader v-if="loadingWords"/>
+  <Navbar />
+  <div class="narrow">
+    <h1 class="title">
+      <text class="highlight">や</text>和英辞書
+    </h1>
+    <SearchBar
+      @search-word="searchWord"
+      :disabled="loadingWords"
+    />
+    <Sentence
+      v-if="this.sentenceWords.length > 0 && !loadingWords"
+      :words="this.sentenceWords"
+      @search-word="searchWord"
+    />
+    <SearchResult
+      v-for="word in words"
+      :key="word.id"
+      :word="word"
+      :tagData="tagData"
+    />
+    <span style="display: block" v-if="words.length > 0">
+      <text v-if="totalWordCount != words.length">
+        <b>{{ totalWordCount }}</b>語の言葉の中で<b>{{ words.length }}</b>語が表示されています
+      </text>
+      <text v-else>
+        すべての言葉が表示されています
+      </text>
+    </span>
+    <span v-if="this.errorMessage">
+      {{this.errorMessage}}
+    </span>
+    <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">もっと見る</button>
+    <Loader v-if="loadingWords"/>
+  </div>
 </template>
 
 <script>
@@ -37,6 +40,7 @@ import SearchBar from '../components/SearchBar.vue';
 import SearchResult from '../components/SearchResult.vue';
 import Loader from '../components/Loader.vue';
 import Sentence from '../components/Sentence.vue';
+import Navbar from '../components/Navbar.vue';
 
 export default {
   name: 'Search',
@@ -57,7 +61,8 @@ export default {
     SearchBar,
     SearchResult,
     Loader,
-    Sentence
+    Sentence,
+    Navbar
   },
   async mounted() {
     // Load tag data
