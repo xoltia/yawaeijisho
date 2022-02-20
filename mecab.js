@@ -1,5 +1,5 @@
 const { spawn } = require('child_process');
-const IconvCP932 = require("iconv-cp932");
+const IconvCP932 = require('iconv-cp932');
 
 /**
  * Parsed output type
