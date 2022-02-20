@@ -4,7 +4,7 @@ const config = {
     jmdictLocation: process.env.JMDICT_LOCATION,
     useIndexFile: process.env.USE_INDEX_FILE === 'true',
     isProduction: process.env.NODE_ENV === 'production',
-    maxPageSize: process.env.MAX_PAGE_SIZE || 25,
+    maxPageSize: process.env.MAX_PAGE_SIZE ? Number(process.env.MAX_PAGE_SIZE) : 25,
     port: process.env.PORT || (this.isProduction ? 80 : 3080),
     tokenSecret: process.env.TOKEN_SECRET,
     db: {
@@ -23,6 +23,8 @@ const config = {
             return `mongodb://${userInfo}${this.host}:${this.port}/${this.name}`;
         }
     },
+    cacheMax: process.env.CACHE_MAX_COUNT ? Number(process.env.CACHE_MAX_COUNT) : 10000,
+    cacheMaxAge: process.env.CACHE_MAX_AGE ? Number(process.env.CACHE_MAX_COUNT) : undefined
 };
 
 module.exports = config;

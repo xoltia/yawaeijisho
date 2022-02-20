@@ -1,13 +1,18 @@
 const jmdict = require('../jmdict');
 const { parse } = require('../mecab');
 const { validationResult } = require('express-validator');
+const LRU = require('lru-cache');
+const config = require('../config');
 
 // TODO: proper cache
-const cache = {};
+const cache = new LRU({
+    max: config.cacheMax,
+    maxAge: config.cachMaxAge
+});
 
 function getEntries(word) {
-    if (word in cache)
-        return cache[word];
+    if (cache.has(word))
+        return cache.get(word);
         
     const entries = /^[\u3040-\u309f\u30a0-\u30ff]+$/.test(word) ?
            jmdict.searchKana(word) :
@@ -27,7 +32,7 @@ function getEntries(word) {
     if (entries.length === 0)
         return entries;
     
-    cache[word] = entries;
+    cache.set(word, entries);
     return entries;
 }
 
