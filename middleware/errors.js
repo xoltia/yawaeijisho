@@ -18,7 +18,7 @@ const en = {
     'AUTH_$_INCORRECT_CREDENTIALS': 'Username or password is incorrect.',
 };
 
-const jp =  {
+const ja =  {
     'AUTH_USERNAME_NULL': 'ユーザー名が必要です。',
     'AUTH_USERNAME_SHORT': 'ユーザー名が{0}文字以上である必要があります。',
     'AUTH_USERNAME_NON_STRING': 'ユーザー名がストリングである必要があります。',
@@ -29,7 +29,7 @@ const jp =  {
     'AUTH_$_INCORRECT_CREDENTIALS': 'そのユーザー名、またはパスワードが間違っています。'
 };
 
-const sources = { jp, en };
+const sources = { ja, en };
 
 /**
  * Create a response object based on an error
@@ -39,7 +39,7 @@ const sources = { jp, en };
  * @returns { error: String, message: String }
  */
 function createError(req, errorName, args) {
-    const lang = req.acceptsLanguages('jp') ? 'jp' : 'en';
+    const lang = req.acceptsLanguages('ja') ? 'ja' : 'en';
     return {
         error: errorName,
         message: format(sources[lang][errorName], args)

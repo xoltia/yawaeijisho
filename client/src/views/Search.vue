@@ -1,9 +1,12 @@
 <template>
   <Navbar />
   <div class="narrow">
-    <h1 class="title">
+    <h1 :class="[$i18n.locale !== 'ja' ? 'title with-sub' : 'title']">
       <text class="highlight">や</text>和英辞書
     </h1>
+    <h2 class="subtitle" v-if="$i18n.locale !== 'ja'">
+      {{ $t('subtitle') }}
+    </h2>
     <SearchBar
       @search-word="searchWord"
       :disabled="loadingWords"
@@ -20,17 +23,17 @@
       :tagData="tagData"
     />
     <span style="display: block" v-if="words.length > 0">
-      <text v-if="totalWordCount != words.length">
-        <b>{{ totalWordCount }}</b>語の言葉の中で<b>{{ words.length }}</b>語が表示されています
-      </text>
-      <text v-else>
-        すべての言葉が表示されています
-      </text>
+      <text v-if="totalWordCount != words.length"
+        v-html="$t('n-words-shown', { totalWordCount, shownCount: words.length })"
+      />
+      <text v-else
+        v-html="$t('all-words-shown')"
+      />
     </span>
-    <span v-if="this.errorMessage">
-      {{this.errorMessage}}
+    <span v-if="this.errorName">
+      {{$t(this.errorName)}}
     </span>
-    <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">もっと見る</button>
+    <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">{{ $t('load-more') }}</button>
     <Loader v-if="loadingWords"/>
   </div>
 </template>
@@ -54,7 +57,7 @@ export default {
       pageSize: 25,
       totalWordCount: 0,
       sentenceWords: [],
-      errorMessage: ''
+      errorName: ''
     }
   },
   components: {
@@ -98,7 +101,7 @@ export default {
       const response = await fetch(`/api/wakachi/${sentence}`);
       return response.json();
     },
-    error(message) {
+    error(errorName) {
       // Reset state
       this.words = [];
       this.sentenceWords = [];
@@ -106,7 +109,7 @@ export default {
       this.loadingWords = false;
 
       // Show error message
-      this.errorMessage = message;
+      this.errorName = errorName;
     },
     // Search word (or phrase if not found as word)
     // Setting final to true means that the search will stop if not found as a single word
@@ -115,12 +118,12 @@ export default {
       // API will not accept >250 length params
       // Each kana/kanji character encoded = 9 length so max of 27 characters
       if (encodeURIComponent(word).length > 250) {
-        return this.error('検索語句が長い過ぎます。２７文字以下にしてください');
+        return this.error('search-too-long-err');
       }
       // Reset state so old results don't show while loading
       this.page = 1;
       this.words = [];
-      this.errorMessage = '';
+      this.errorName = '';
       this.loadingWords = true;
 
       // See how many total matches there are
@@ -132,7 +135,7 @@ export default {
       if (this.words.length === 0) {
         // If this search is already comming from a sentence search then stop
         if (final) {
-          return this.error('何も見つかりませんでした');
+          return this.error('nothing-found-err');
         }
 
         const words = await this.wakachi(word);
@@ -183,6 +186,16 @@ export default {
                         supported by Chrome, Edge, Opera and Firefox */
 }
 
+.title.with-sub {
+  margin-bottom: 0;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 2em;
+  margin-top: 0;
+}
+
 #next-pg-btn {
   background: none;
   border: none;
@@ -196,11 +209,17 @@ export default {
   .title {
     font-size: 65px;
   }
+  .subtitle {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 700px) {
   .title {
     font-size: 45px;
+  }
+  .subtitle {
+    font-size: 10px;
   }
 }
 </style>

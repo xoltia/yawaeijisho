@@ -5,13 +5,13 @@
       ref="search"
       v-model.lazy="searchInput"
       @keyup.enter="search"
-      placeholder="意味の知りたい語句"
+      :placeholder="$t('search-placeholder')"
     />
     <button
       id="search-button"
       class="highlight-bg"
       @click="search"
-      :disabled="disabled">検索</button>
+      :disabled="disabled">{{ $t('search-button') }}</button>
   </div>
 </template>
 

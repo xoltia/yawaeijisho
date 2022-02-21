@@ -1,6 +1,6 @@
 <template>
   <div class="form" @keyup.enter.prevent="handleSubmit">
-    <h1>{{ isSignup ? 'ようこそ!' : 'お帰りなさい' }}</h1>
+    <h1>{{ $t(isSignup ? 'welcome' : 'welcome-back') }}</h1>
     <div class="error-msg big" v-for="err in errors.$" :key="err.name">
       {{ err.message }}
     </div>
@@ -8,7 +8,7 @@
       :class="['form-input', errors.username ? 'error' : '']"
       v-model="username"
       type="text"
-      placeholder="ユーザー名"
+      :placeholder="$t('username-placeholder')"
     />
     <div class="error-msg" v-for="err in errors.username" :key="err.name">
       {{ err.message }}
@@ -17,14 +17,22 @@
       :class="['form-input', errors.password ? 'error' : '']"
       v-model="password"
       type="password"
-      placeholder="パスワード"
+      :placeholder="$t('pwd-placeholder')"
     />
     <div class="error-msg" v-for="err in errors.password" :key="err.name">
       {{ err.message }}
     </div>
-    <input class="form-input" v-if="isSignup" v-model="passwordConfirmation" type="password" placeholder="パスワード確認">
-    <router-link to="/" class="link">ホームページへ戻る</router-link>
-    <a :class="['btn', canSubmit ? '' : 'disabled']" @click="handleSubmit">{{ isSignup ? '登録' : 'ログイン' }}</a>
+    <input
+      class="form-input"
+      v-if="isSignup"
+      v-model="passwordConfirmation"
+      type="password"
+      :placeholder="$t('pwd-confirm-placeholder')"
+    />
+    <router-link to="/" class="link">{{ $t('return-home-link') }}</router-link>
+    <a :class="['btn', canSubmit ? '' : 'disabled']" @click="handleSubmit">
+      {{ isSignup ? $t('signup-button'): $t('login-button') }}
+    </a>
   </div>
 </template>
 

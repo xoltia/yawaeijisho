@@ -1,13 +1,14 @@
 <template>
   <div class="navbar">
-    <router-link to="/about" class="nav-link">このサイトについて</router-link>
-    <router-link to="/lists" class="nav-link">リスト</router-link>
+    <router-link to="/about" class="nav-link">{{ $t('about-link') }}</router-link>
+    <router-link to="/lists" class="nav-link">{{ $t('lists-link') }}</router-link>
+    <LocaleSwitcher/>
     <div v-if="!this.auth.isAuthenticated" class="nav-btns">
-      <router-link to="/signin" class="btn invert" >ログイン</router-link>
-      <router-link to="/signup" class="btn" style="margin-left: 10px">登録</router-link>
+      <router-link to="/signin" class="btn invert" >{{ $t('login-button') }}</router-link>
+      <router-link to="/signup" class="btn" style="margin-left: 10px">{{ $t('signup-button') }}</router-link>
     </div>
     <div v-else class="nav-btns">
-      <a class="btn invert" @click="this.auth.logout">ログアウト</a>
+      <a class="btn invert" @click="this.auth.logout">{{ $t('logout-button') }}</a>
     </div>
   </div>
 
@@ -16,34 +17,43 @@
   </button>
 
   <div class="menu" :class="[ showMobileMenu ? 'show' : '' ]">
-    <router-link to="/signin" class="menu-link" >
-      <text>ログイン</text>
+    <router-link v-if="!this.auth.isAuthenticated" to="/signin" class="menu-link" >
+      <text>{{ $t('login-button') }}</text>
       <font-awesome-icon icon="chevron-right"/>
     </router-link>
-    <router-link to="/signup" class="menu-link">
-      <text>登録</text>
+    <router-link v-if="!this.auth.isAuthenticated" to="/signup" class="menu-link">
+      <text>{{ $t('signup-button') }}</text>
       <font-awesome-icon icon="chevron-right"/>
     </router-link>
     <router-link to="/about" class="menu-link">
-      <text>このサイトについて</text>
+      <text>{{ $t('about-link') }}</text>
       <font-awesome-icon icon="chevron-right"/>
     </router-link>
     <router-link to="/lists" class="menu-link">
-      <text>リスト</text>
+      <text>{{ $t('lists-link') }}</text>
       <font-awesome-icon icon="chevron-right"/>
     </router-link>
-    <a @click="showMobileMenu = false" class="menu-link">
-      <text>戻る</text>
+    <a v-if="this.auth.isAuthenticated" class="menu-link" @click="this.auth.logout">
+      <text>{{ $t('logout-button') }}</text>
       <font-awesome-icon icon="chevron-left"/>
     </a>
+    <a @click="showMobileMenu = false" class="menu-link">
+      <text>{{ $t('return-link') }}</text>
+      <font-awesome-icon icon="chevron-left"/>
+    </a>
+    <LocaleSwitcher class="mobile-locale-switch"/>
   </div>
 </template>
 
 <script>
+import LocaleSwitcher from '../components/LocaleSwitcher.vue';
 import { useAuthStore } from '../store/useAuthStore';
 
 export default {
   name: 'Navbar',
+  components: {
+    LocaleSwitcher
+  },
   setup() {
     const auth = useAuthStore();
     return { auth };
@@ -57,6 +67,12 @@ export default {
 </script>
 
 <style scoped>
+.mobile-locale-switch {
+  padding: 5px;
+  max-width: 100px;
+  align-self: center;
+}
+
 .navbar {
   display: flex;
   margin-top: 20px;

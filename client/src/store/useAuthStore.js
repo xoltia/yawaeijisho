@@ -17,7 +17,11 @@ export const useAuthStore = defineStore({
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
-        headers: { 'Content-Type': 'application/json', 'Accept-Language': 'jp' }
+        headers: {
+          'Content-Type': 'application/json',
+          // There has to be a better way to do this
+          'Accept-Language': localStorage.getItem('preferences.lang') || navigator.language.split('-')[0]
+        }
       });
 
       if (response.ok) {
@@ -33,7 +37,10 @@ export const useAuthStore = defineStore({
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
-        headers: { 'Content-Type': 'application/json', 'Accept-Language': 'jp' }
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': localStorage.getItem('preferences.lang') || navigator.language.split('-')[0]
+        }
       });
 
       if (response.ok) {
