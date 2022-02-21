@@ -46,6 +46,14 @@ function createError(req, errorName, args) {
     };
 }
 
+/**
+ * String formating function
+ * Ex. format string: 'Showing {0} of {1} results.'
+ * will result in string of `Showing {args[0]} of {args[1]} results.`
+ * @param {String} str String to be formated
+ * @param  {...any} args Arguments to format string with
+ * @returns {String} The formated string
+ */
 function format(str, ...args) {
     return str.replace(/{(\d+)}/g, function(match, number) { 
         return typeof args[number] != 'undefined'

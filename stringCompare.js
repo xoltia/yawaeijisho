@@ -90,11 +90,13 @@ function createComparableChars(str) {
         // If small character, find normal version from map
         if (KOKAKIMOJI_MAP.has(charCode))
             finalChars[i] = KOKAKIMOJI_MAP.get(charCode);  
+        // If vowel extension replace with appropriate vowel
         else if (charCode === CHOUONKIGOU && i > 0)
             finalChars[i] = ONBIKI_MAP.get(finalChars[i - 1]);
         // If char code is even then it is the dakuten character
         else if (isKurikaeshiKigou(charCode) && i > 0)
             finalChars[i] = finalChars[i - 1] + (charCode % 2 === 0);
+        // Not a special case, just return the character
         else
             finalChars[i] = charCode;
     }

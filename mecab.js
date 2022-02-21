@@ -31,7 +31,7 @@ function format(output) {
 }
 
 /**
- * 
+ * Passes a phrase string as input to mecab and returns the output as an object
  * @param {String} phrase 
  * @param {function(MecabOutput)} callback 
  */

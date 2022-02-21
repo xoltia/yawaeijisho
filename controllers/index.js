@@ -4,7 +4,6 @@ const { validationResult } = require('express-validator');
 const LRU = require('lru-cache');
 const config = require('../config');
 
-// TODO: proper cache
 const cache = new LRU({
     max: config.cacheMax,
     maxAge: config.cachMaxAge
