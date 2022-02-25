@@ -4,9 +4,6 @@
       {{ lang }}
     </option>
   </select>
-
-  <!-- Mobile menu select -->
-
 </template>
 
 <script>
@@ -16,12 +13,6 @@ export default {
     return {
       langs: ['ja', 'en'],
       selectedLang: this.$i18n.locale,
-    }
-  },
-  props: {
-    isMobile: {
-      type: Boolean,
-      default: false
     }
   },
   watch: {
