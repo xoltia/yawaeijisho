@@ -25,7 +25,7 @@ export const useAuthStore = defineStore({
       });
 
       if (response.ok) {
-        this.token = await response.text();
+        this.token = await response.json();
         localStorage.setItem('token', this.token);
         return this.token;
       } else {
@@ -44,7 +44,7 @@ export const useAuthStore = defineStore({
       });
 
       if (response.ok) {
-        this.token = await response.text();
+        this.token = await response.json();
         localStorage.setItem('token', this.token);
         return this.token;
       } else {
@@ -72,13 +72,6 @@ export const useAuthStore = defineStore({
     logout() {
       this.token = null;
       localStorage.removeItem('token');
-    },
-    // Make an authenticated request
-    makeRequest(url, options) {
-      options.headers = options.headers || {};
-      options.headers['Authorization'] = `Bearer ${this.token}`;
-      
-      return fetch(url, options);
     }
   }
 });

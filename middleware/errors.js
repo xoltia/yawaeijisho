@@ -8,6 +8,7 @@
 const { validationResult } = require('express-validator');
 
 const en = {
+    '$_$_CLIENT_ERROR': 'An unexpected error has occured.',
     'AUTH_USERNAME_NULL': 'A username is required.',
     'AUTH_USERNAME_SHORT': 'Username must be at least {0} chracters long.',
     'AUTH_USERNAME_NON_STRING': 'Username must be a string.',
@@ -19,6 +20,7 @@ const en = {
 };
 
 const ja =  {
+    '$_$_CLIENT_ERROR': '予想外のエラーが発生しました。',
     'AUTH_USERNAME_NULL': 'ユーザー名が必要です。',
     'AUTH_USERNAME_SHORT': 'ユーザー名が{0}文字以上である必要があります。',
     'AUTH_USERNAME_NON_STRING': 'ユーザー名がストリングである必要があります。',
@@ -42,7 +44,7 @@ function createError(req, errorName, args) {
     const lang = req.acceptsLanguages('ja') ? 'ja' : 'en';
     return {
         error: errorName,
-        message: format(sources[lang][errorName], args)
+        message: format(sources[lang][errorName] || '', args)
     };
 }
 
@@ -82,9 +84,14 @@ function createValidationHandler(errorName, args) {
     const errors = validationResult(req);
     if (errors.isEmpty())
         return next();
-
-    res.status(400).json({ errors: 
-        errors.array().map(err => err.msg)
+        
+    res.status(400).json({
+        // If error message is default express-validator error then
+        // the error was not caused by user input
+        errors: errors.array().map(err => err.msg.error ? err.msg : {
+            ...createError(req, '$_$_CLIENT_ERROR'),
+            details: err
+        }),
     });
 }
 

@@ -95,6 +95,10 @@ function buildWordList() {
 function buildIndices(storeIndices=false) {
     let kanjiIndex = [];
     let kanaIndex = [];
+    let wordIds = {};
+
+    for (let [index, word] of jmdict.words.entries())
+        wordIds[word.id] = index;
 
     if (storeIndices && fs.existsSync('./kanjiIndexSorted.json') && fs.existsSync('./kanaIndexSorted.json')) {
         kanjiIndex = require('./kanjiIndexSorted.json');
@@ -105,7 +109,7 @@ function buildIndices(storeIndices=false) {
                 kanjiIndex.push([text, index]);
             for (let { text } of word.kana)
                 kanaIndex.push([text, index]);
-        };
+        }
     
         kanjiIndex.sort((k1, k2) => kanjiStringCompare(k1[0], k2[0]));
         kanaIndex.sort((k1, k2) => kanaStringCompare(k1[0], k2[0]));
@@ -118,6 +122,8 @@ function buildIndices(storeIndices=false) {
 
     module.exports.searchKanji = createSearchFunction(kanjiIndex, kanjiStringStartsWith);
     module.exports.searchKana = createSearchFunction(kanaIndex, kanaStringStartsWith);
+    module.exports.getWord = (id) => words[wordIds[id]];
+    module.exports.isValidId = (id) => id in wordIds;
 }
 
 /* Helper functions */

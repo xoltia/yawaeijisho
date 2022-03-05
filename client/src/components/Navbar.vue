@@ -1,7 +1,8 @@
 <template>
   <div class="navbar">
+    <router-link v-if="showHomeLink" to="/" class="nav-link">{{ $t('home-link') }}</router-link>
     <router-link to="/about" class="nav-link">{{ $t('about-link') }}</router-link>
-    <router-link to="/lists" class="nav-link">{{ $t('lists-link') }}</router-link>
+    <router-link v-if="showListsLink" to="/lists" class="nav-link">{{ $t('lists-link') }}</router-link>
     <LocaleSwitcher/>
     <div v-if="!this.auth.isAuthenticated" class="nav-btns">
       <router-link to="/signin" class="btn invert" >{{ $t('login-button') }}</router-link>
@@ -17,6 +18,10 @@
   </button>
 
   <div class="menu" :class="[ showMobileMenu ? 'show' : '' ]">
+    <router-link v-if="showHomeLink" to="/" class="menu-link">
+      <text>{{ $t('home-link') }}</text>
+      <font-awesome-icon icon="chevron-right"/>
+    </router-link>
     <router-link v-if="!this.auth.isAuthenticated" to="/signin" class="menu-link" >
       <text>{{ $t('login-button') }}</text>
       <font-awesome-icon icon="chevron-right"/>
@@ -29,7 +34,7 @@
       <text>{{ $t('about-link') }}</text>
       <font-awesome-icon icon="chevron-right"/>
     </router-link>
-    <router-link to="/lists" class="menu-link">
+    <router-link v-if="showListsLink" to="/lists" class="menu-link">
       <text>{{ $t('lists-link') }}</text>
       <font-awesome-icon icon="chevron-right"/>
     </router-link>
@@ -53,6 +58,16 @@ export default {
   name: 'Navbar',
   components: {
     LocaleSwitcher
+  },
+  props: {
+    showHomeLink: {
+      type: Boolean,
+      default: true
+    },
+    showListsLink: {
+      type: Boolean,
+      default: true
+    },
   },
   setup() {
     const auth = useAuthStore();
@@ -90,6 +105,10 @@ export default {
   font-size: 14px;
   margin: 0;
   margin-right: 15px;
+}
+
+.nav-link.logo {
+  font-size: 25px;
 }
 
 .menu {

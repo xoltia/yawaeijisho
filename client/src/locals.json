@@ -1,5 +1,6 @@
 {
     "en": {
+        "home-link": "Search",
         "about-link": "About",
         "lists-link": "Lists",
         "login-button": "Login",
@@ -19,9 +20,17 @@
         "search-too-long-err": "Your search phrase is too long。Please keep it within 27 characters.",
         "nothing-found-err": "Sorry, not matching word could be found.",
         "subtitle": "Yet Another Japanese-English Dictionary",
-        "load-more": "Load more"
+        "load-more": "Load more",
+        "remaining": " remaining",
+        "my-lists": "My Lists",
+        "created-at": "Created at",
+        "id": "ID",
+        "nothing-added": "You have not saved any words to this list.",
+        "make-new-account": "Create a new account",
+        "use-existing-account": "Use an existing account"
     },
     "ja": {
+        "home-link": "検索ページ",
         "about-link": "このサイトについて",
         "lists-link": "リスト",
         "login-button": "ログイン",
@@ -40,6 +49,13 @@
         "all-words-shown": "すべての言葉が表示されています",
         "search-too-long-err": "検索語句が長い過ぎます。２７文字以下にしてください",
         "nothing-found-err": "何も見つかりませんでした",
-        "load-more": "もっと見る"
+        "load-more": "もっと見る",
+        "remaining": "語残り",
+        "my-lists": "自分のリスト",
+        "created-at": "生成した日時",
+        "id": "ＩＤ",
+        "nothing-added": "このリストに保存した言葉がありません",
+        "make-new-account": "新しいアカウントを作成",
+        "use-existing-account": "登録済みのアカウントでログイン"
     }
 }

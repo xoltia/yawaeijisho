@@ -1,5 +1,5 @@
 <template>
-  <Navbar />
+  <Navbar :showHomeLink="false"/>
   <div class="narrow">
     <h1 :class="[$i18n.locale !== 'ja' ? 'title with-sub' : 'title']">
       <text class="highlight">や</text>和英辞書

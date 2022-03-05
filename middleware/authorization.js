@@ -4,21 +4,21 @@ const User = require('../models/User');
 const { tokenSecret } = require('../config');
 
 // Verifies that user has a valid token and adds the userId property to the request object
-module.exports.isAuthorized = (req, res, next) => {
+module.exports.isAuthorized = (req, res, next, failCode=401) => {
     if (!req.headers.authorization)
-        return res.sendStatus(401);
-
+        return res.sendStatus(failCode);
     try {
         // Verify token (format: Bearer token)
         const payload = jwt.verify(req.headers.authorization.slice(7), tokenSecret);
         // Add userId request object and continue
         req.userId = payload.id;
-        next();
     } catch (e) {
         // If there was an error then the authorization header was
         // in an incorrect format or had an invalid token
-        res.sendStatus(401);
+        return res.sendStatus(failCode);
     }
+    
+    next();
 };
 
 // Adds user object to request from userId

@@ -21,7 +21,8 @@
     "iconv-cp932": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "lru-cache": "^7.3.1",
-    "mongoose": "^6.2.0"
+    "mongoose": "^6.2.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "concurrently": "^7.0.0"

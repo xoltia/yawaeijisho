@@ -59,6 +59,25 @@ module.exports.count = (req, res) => {
     res.json(getEntries(req.params.word).length);
 };
 
+module.exports.getById = (req, res) => {
+    // 404 if no word with ID exists
+    const word = jmdict.getWord(req.params.id);
+    if (!word)
+        return res.sendStatus(404);
+    res.json(word);
+};
+
+module.exports.getMultipleByIds = (req, res) => {
+    // Don't send more words than would be allowed with a normal search
+    req.query.id.length = Math.min(req.query.id.length, config.maxPageSize);
+
+    // At this point API will have errors if any of the IDs were invalid
+    // so mapping should work without checking for invalid IDs
+    const words = req.query.id.map(id => jmdict.getWord(id));
+    
+    res.json(words);
+};
+
 module.exports.wakachi = (req, res) => {
     parse(req.params.phrase, (result) => {
         const response = result.map(data => [

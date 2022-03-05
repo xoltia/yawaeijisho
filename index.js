@@ -10,6 +10,8 @@ app.use(express.json());
 app.use('/api', require('./routes'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/lists', require('./routes/lists'));
+
 // If environment set to production serve built client files
 if (config.isProduction) {
     app.use(express.static(path.join(__dirname, '/client/dist')));

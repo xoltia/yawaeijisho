@@ -1,6 +1,8 @@
 <template>
   <div class="form" @keyup.enter.prevent="handleSubmit">
     <h1>{{ $t(isSignup ? 'welcome' : 'welcome-back') }}</h1>
+    <router-link v-if="!isSignup" to="/signup" class="link">{{ $t('make-new-account') }}</router-link>
+    <router-link v-else to="/signin" class="link">{{ $t('use-existing-account') }}</router-link>
     <div class="error-msg big" v-for="err in errors.$" :key="err.name">
       {{ err.message }}
     </div>
@@ -33,14 +35,19 @@
     <a :class="['btn', canSubmit ? '' : 'disabled']" @click="handleSubmit">
       {{ isSignup ? $t('signup-button'): $t('login-button') }}
     </a>
+    <LocaleSwitcher :style="{ width: '50px', margin: 'auto', marginTop: '15px' }"/>
   </div>
 </template>
 
 <script>
 import { useAuthStore } from '../store/useAuthStore';
+import LocaleSwitcher from '../components/LocaleSwitcher.vue';
 
 export default {
   name: 'Signin',
+  components: {
+    LocaleSwitcher
+  },
   setup() {
     const auth = useAuthStore();
     return { auth };

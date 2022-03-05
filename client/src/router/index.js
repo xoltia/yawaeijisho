@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Search from '../views/Search.vue';
+import { useAuthStore } from '../store/useAuthStore';
 
 const routes = [
   {
@@ -17,6 +18,16 @@ const routes = [
     name: 'Signup',
     component: () => import('../views/Signin.vue'),
     props: { isSignup: true }
+  },
+  {
+    path: '/lists',
+    name: 'Lists',
+    component: () => import('../views/Lists.vue'),
+    beforeEnter: (to, from, next) => {
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated) next();
+      else next('/signin');
+    }
   }
 ];
 
