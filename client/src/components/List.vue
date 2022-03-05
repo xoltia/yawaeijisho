@@ -25,6 +25,7 @@
           <SearchResult v-if="listWords.length > 0"
             :word="listWords[selectedWord]"
             :tagData="tagData"
+            :compact="true"
           />
           <div v-else>
             {{ $t('nothing-added') }}

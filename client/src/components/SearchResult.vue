@@ -4,9 +4,11 @@
       :key="writing"
       :kanji="writing[0]"
       :kana="writing[1]"
-      :tags="getTags(writing)"
+      :tags="compact ? [] : getTags(writing)"
       :tagData="tagData"
+      :style="compact ? { display: 'inline-block' } : {}"
     />
+    <!-- TODO: find a way to still show tag data when compact  -->
     <Definition v-for="(definition, index) in sense.definitions"
       :key="index"
       :number="index"
@@ -29,6 +31,10 @@ export default {
   props: {
     word: Object,
     tagData: Object,
+    compact: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     getTags(writing) {
