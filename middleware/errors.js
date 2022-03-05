@@ -24,7 +24,7 @@ const ja =  {
     'AUTH_USERNAME_NULL': 'ユーザー名が必要です。',
     'AUTH_USERNAME_SHORT': 'ユーザー名が{0}文字以上である必要があります。',
     'AUTH_USERNAME_NON_STRING': 'ユーザー名がストリングである必要があります。',
-    'AUTH_USERNAME_TAKEN': 'そのユーザー名のユーザーが既に既存です。',
+    'AUTH_USERNAME_TAKEN': 'そのユーザー名が既に使われています。',
     'AUTH_PASSWORD_NULL': 'パスワードが必要です。',
     'AUTH_PASSWORD_NON_STRING': 'パスワードがストリングである必要があります。',
     'AUTH_PASSWORD_WEAK': 'パスワードが弱い過ぎます。',
