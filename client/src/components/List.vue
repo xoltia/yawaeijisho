@@ -24,7 +24,7 @@
         <div class="word-view">
           <SearchResult v-if="listWords.length > 0"
             :word="listWords[selectedWord]"
-            :tagData="{}"
+            :tagData="tagData"
           />
           <div v-else>
             {{ $t('nothing-added') }}
@@ -61,7 +61,8 @@ export default {
     pageSize: {
       type: Number,
       default: 25
-    }
+    },
+    tagData: Object
   },
   methods: {
     wordSelectorLabel(word) {

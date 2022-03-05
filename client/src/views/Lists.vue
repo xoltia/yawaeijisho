@@ -7,6 +7,7 @@
       <List v-for="list in listStore.lists"
         :key="list._id"
         :list="list"
+        :tagData="tagData"
       />
     </div>
   </div>
@@ -25,12 +26,20 @@ export default {
     Loader,
     List
   },
+  data() {
+    return {
+      tagData: {}
+    }
+  },
   setup() {
     const listStore = useListStore();
     return { listStore };
   },
-  mounted() {
+  async mounted() {
     this.listStore.fetchLists();
+    // TODO: reusable tags across all routes?
+    const response = await fetch(`/api/tags`);
+    this.tagData = await response.json();
   }
 }
 </script>
