@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faBars, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronRight, faChevronLeft, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import axios from './axios';
 import VueAxios from 'vue-axios';
@@ -14,7 +14,9 @@ import messages from './locals.json';
 library.add(
     faBars,
     faChevronRight,
-    faChevronLeft
+    faChevronLeft,
+    faChevronDown,
+    faChevronUp
 );
 
 const i18n = createI18n({

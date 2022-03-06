@@ -1,5 +1,8 @@
 <template>
-  <button @click="showList()" class="list-collapsible" :class="[active ? 'active' : '']">{{ list.title }}</button>
+  <button @click="showList()" style="display: flex" class="list-collapsible dark" :class="[active ? 'active' : '']">
+    <text style="width: 95%;">{{ list.title }}</text>
+    <font-awesome-icon style="width: 5%;" :icon="'chevron-' + (active ? 'up' : 'down')"/>
+  </button>
   <div class="list-content" :style="{ display: active ? 'block': 'none' }">
     <Loader style="margin: 10px" v-if="loadingWords"/>
     <div v-else>
@@ -19,7 +22,8 @@
           >{{ wordSelectorLabel(word) }}</button>
           <button class="word-selector"
             @click="this.loadNextWordPage"
-          >{{ $t('load-more') }} ({{ Math.max(0, listWordIDs.length - page * pageSize) }}{{ $t('remaining') }})</button>
+            v-if="remainingWords > 0"
+          >{{ $t('load-more') }} ({{ remainingWords }}{{ $t('remaining') }})</button>
         </div>
         <div class="word-view">
           <SearchResult v-if="listWords.length > 0"
@@ -27,7 +31,7 @@
             :tagData="tagData"
             :compact="true"
           />
-          <div v-else>
+          <div style="text-align: center; margin-top: 100px" v-else>
             {{ $t('nothing-added') }}
           </div>
         </div>
@@ -64,6 +68,11 @@ export default {
       default: 25
     },
     tagData: Object
+  },
+  computed: {
+    remainingWords() {
+      return Math.max(0, this.listWordIDs.length - this.page * this.pageSize)
+    }
   },
   methods: {
     wordSelectorLabel(word) {
@@ -110,15 +119,13 @@ export default {
 <style scoped>
 .words {
   display: flex;
-  border-top: 1px solid #2c3e50;
-  max-height: 500px;
+  height: 500px;
 }
 
 .word-selector {
   cursor: pointer;
   width: 100%;
   border: none;
-  border-bottom: 1px solid #2c3e50;
   text-align: left;
   outline: none;
   font-size: 15px;
@@ -127,13 +134,17 @@ export default {
   padding: 10px;
   font-weight: bold;
   color: #2c3e50;
+  /*border-bottom: 1px solid #2c3e50;*/
+}
+
+.word-selector:nth-child(even) {
+  background-color: whitesmoke;
 }
 
 .word-selectors {
   background-color: #eee;
   width: 25%;
   overflow-wrap: break-word;
-
   margin-right: 10px;
   overflow-y: scroll;
 }
@@ -151,11 +162,16 @@ export default {
   overflow-wrap: break-word;
   font-weight: bold;
   font-size: 20px;
-  border-bottom: 1px solid #2c3e50;
+
 }
 
-.active, .list-collapsible:hover {
+.word-selector.active, .list-collapsible:hover {
   background-color: #b06bff;
+  color: white;
+}
+
+.active.dark {
+  background-color: #2c3e50;
   color: white;
 }
 
@@ -168,6 +184,7 @@ export default {
 }
 
 .list-info {
+  background-color: #e2e2e2; 
   padding: 18px;
 }
 
