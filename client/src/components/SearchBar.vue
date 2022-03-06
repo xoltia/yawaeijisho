@@ -39,7 +39,7 @@ export default {
     search() {
       if (this.disabled || this.searchInput.length === 0)
         return;
-      this.$emit('search-word', this.$data.searchInput);
+      this.$emit('search-word', this.$data.searchInput.trim());
     }
   },
   emits: ['search-word']
