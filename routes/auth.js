@@ -7,7 +7,8 @@ router.post('/signup', [
     body('username')
         .exists().withMessage(createValidationHandler('AUTH_USERNAME_NULL')).bail()
         .isString().withMessage(createValidationHandler('AUTH_USERNAME_NON_STRING')).bail()
-        .isLength({ min: 3 }).withMessage(createValidationHandler('AUTH_USERNAME_SHORT', 3)),
+        .isLength({ min: 3 }).withMessage(createValidationHandler('AUTH_USERNAME_SHORT', 3))
+        .isLength({ max: 15 }).withMessage(createValidationHandler('AUTH_USERNAME_SHORT', 15)),
     body('password')
         .exists().withMessage(createValidationHandler('AUTH_PASSWORD_NULL')).bail()
         .isString().withMessage(createValidationHandler('AUTH_PASSWORD_NON_STRING')).bail()
