@@ -30,29 +30,25 @@ router.post('/', [
     isAuthorized,
     body('title')
         .exists()
-        .withMessage(createValidationHandler('LISTS_TITLE_NULL')).bail()
         .isString()
-        .withMessage(createValidationHandler('LISTS_TITLE_NOT_STRING')).bail()
         .isLength({ min:  3 })
-        .withMessage(createValidationHandler('LISTS_TITLE_TOO_SHORT')).bail()
+        .withMessage(createValidationHandler('LISTS_TITLE_SHORT')).bail()
         .isLength({ max: 30 })
-        .withMessage(createValidationHandler('LISTS_TITLE_TOO_LONG')),
+        .withMessage(createValidationHandler('LISTS_TITLE_LONG')),
     body('slug')
         .customSanitizer((input) => input || uuidv4())
         .isLength({ min:  3 })
-        .withMessage(createValidationHandler('LISTS_SLUG_TOO_SHORT'))
+        .withMessage(createValidationHandler('LISTS_SLUG_SHORT')).bail()
         .isLength({ max: 36 })
-        .withMessage(createValidationHandler('LISTS_SLUG_TOO_LONG')),
+        .withMessage(createValidationHandler('LISTS_SLUG_LONG')),
     body('description')
         .optional()
         .isString()
-        .withMessage(createValidationHandler('LISTS_DESCRIPTION_NOT_STRING'))
         .isLength({ max: 500 })
-        .withMessage(createValidationHandler('LISTS_DESCRIPTION_TOO_LONG')),
+        .withMessage(createValidationHandler('LISTS_DESCRIPTION_LONG')),
     body('public')
         .default(true)
-        .isBoolean()
-        .withMessage(createValidationHandler('LISTS_PUBLIC_NOT_BOOL')).bail(),
+        .isBoolean(),
     collectErrors
 ], controller.postList);
 

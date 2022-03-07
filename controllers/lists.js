@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const List = require('../models/List');
 const User = require('../models/User');
 const { isAuthorized } = require('../middleware/authorization');
+const { createError } = require('../middleware/errors');
 
 module.exports.getMyLists = asyncHandler(async (req, res) => {
     const creator = req.userId;
@@ -92,6 +93,12 @@ module.exports.postList = asyncHandler(async (req, res) => {
         public
     });
 
-    await list.save();
+    try {
+        await list.save();
+    } catch (err) {
+        if (err.code === 11000 && err.keyPattern.creator && err.keyPattern.slug)
+            return res.status(400).json(createError(req, 'LISTS_SLUG_NOT_UNIQUE'));
+    }
+
     res.json(list);
 });

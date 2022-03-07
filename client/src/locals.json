@@ -27,7 +27,16 @@
         "id": "ID",
         "nothing-added": "You have not saved any words to this list.",
         "make-new-account": "Create a new account",
-        "use-existing-account": "Use an existing account"
+        "use-existing-account": "Use an existing account",
+        "create-list": "Create List",
+        "new-list": "New List",
+        "title": "Title",
+        "description": "Description",
+        "slug": "Slug",
+        "auto-slug": "Auto Slug",
+        "public": "Public",
+        "submit": "Submit",
+        "cancel": "Cancel"
     },
     "ja": {
         "home-link": "検索ページ",
@@ -56,6 +65,15 @@
         "id": "ＩＤ",
         "nothing-added": "このリストに保存した言葉がありません",
         "make-new-account": "新しいアカウントを作成",
-        "use-existing-account": "登録済みのアカウントでログイン"
+        "use-existing-account": "登録済みのアカウントでログイン",
+        "create-list": "リストを作成",
+        "new-list": "新しいリスト",
+        "title": "標記",
+        "description": "説明",
+        "slug": "スラッグ",
+        "auto-slug": "自動的なスラッグ",
+        "public": "公開",
+        "submit": "投稿",
+        "cancel": "キャンセル"
     }
 }

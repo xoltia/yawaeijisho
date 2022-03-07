@@ -162,7 +162,14 @@ export default {
   overflow-wrap: break-word;
   font-weight: bold;
   font-size: 20px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
 
+.list-collapsible.active {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
 }
 
 .word-selector.active, .list-collapsible:hover {
@@ -181,6 +188,9 @@ export default {
   overflow: hidden;
   background-color: #f1f1f1;
   text-align: left;
+  margin-bottom: 10px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .list-info {

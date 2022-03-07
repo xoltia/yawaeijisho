@@ -2,7 +2,7 @@
   <Navbar :showHomeLink="false"/>
   <div class="narrow">
     <h1 :class="[$i18n.locale !== 'ja' ? 'title with-sub' : 'title']">
-      <text class="highlight">や</text>和英辞書
+      <text class="highlight">Ya</text>和英辞書
     </h1>
     <h2 class="subtitle" v-if="$i18n.locale !== 'ja'">
       {{ $t('subtitle') }}
@@ -175,7 +175,7 @@ export default {
 <style scoped>
 .title {
   font-size: 100px;
-  font-weight: bold;
+  font-weight: 900;
   width: 100%;
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */

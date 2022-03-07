@@ -17,6 +17,12 @@ const en = {
     'AUTH_PASSWORD_NON_STRING': 'Password must be a string.',
     'AUTH_PASSWORD_WEAK': 'Password is too weak.',
     'AUTH_$_INCORRECT_CREDENTIALS': 'Username or password is incorrect.',
+    'LISTS_TITLE_TOO_SHORT': 'Title is too short.',
+    'LISTS_TITLE_TOO_LONG': 'Title is too long.',
+    'LISTS_SLUG_TOO_SHORT': 'Slug is too short.',
+    'LISTS_SLUG_TOO_LONG': 'Slug is too long.',
+    'LISTS_SLUG_NOT_UNIQUE': 'Slugs must be unique.',
+    'LISTS_DESCRIPTION_TOO_LONG': 'Description is too long.',
 };
 
 const ja =  {
@@ -27,8 +33,14 @@ const ja =  {
     'AUTH_USERNAME_TAKEN': 'そのユーザー名が既に使われています。',
     'AUTH_PASSWORD_NULL': 'パスワードが必要です。',
     'AUTH_PASSWORD_NON_STRING': 'パスワードがストリングである必要があります。',
-    'AUTH_PASSWORD_WEAK': 'パスワードが弱い過ぎます。',
-    'AUTH_$_INCORRECT_CREDENTIALS': 'そのユーザー名、またはパスワードが間違っています。'
+    'AUTH_PASSWORD_WEAK': 'パスワードが弱すぎます。',
+    'AUTH_$_INCORRECT_CREDENTIALS': 'そのユーザー名、またはパスワードが間違っています。',
+    'LISTS_TITLE_SHORT': '標記が短すぎます。',
+    'LISTS_TITLE_LONG': '標記が長すぎます。',
+    'LISTS_SLUG_SHORT': 'スラッグが短すぎます。',
+    'LISTS_SLUG_LONG': 'スラッグが長すぎます。',
+    'LISTS_SLUG_NOT_UNIQUE': 'ご利用のアカウントでそのスラッグが既に使われています。',
+    'LISTS_DESCRIPTION_LONG': '説明が長い過ぎます。',
 };
 
 const sources = { ja, en };
