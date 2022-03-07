@@ -43,7 +43,6 @@
 <script>
 import Loader from '../components/Loader.vue';
 import SearchResult from '../components/SearchResult.vue';
-import axios from '../axios';
 
 export default {
   name: 'List',
@@ -94,7 +93,7 @@ export default {
       }
     },
     async getWordIDs() {
-      const response = await axios.get(`/api/lists/${this.list._id}/words`);
+      const response = await this.$http.get(`/api/lists/${this.list._id}/words`);
       return response.data;
     },
     async loadNextWordPage() {
@@ -104,7 +103,7 @@ export default {
       if (nextSet.length === 0)
           return;
 
-      const response = await axios.get('/api/words', {
+      const response = await this.$http.get('/api/words', {
           params: { id: nextSet.join(',') }
       });
 
