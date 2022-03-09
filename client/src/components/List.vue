@@ -8,8 +8,9 @@
     <div v-else>
       <div class="list-info">
         <p v-if="list.description">{{ list.description  }}</p>
-        <h6 class="list-property">{{ $t('created-at') }}: {{ list.createdAt  }}</h6>
         <h6 class="list-property">{{ $t('id') }}: {{ list._id  }}</h6>
+        <h6 class="list-property">{{ $t('created-at') }}: {{ list.createdAt  }}</h6>
+        <h6 class="list-property">{{ $t('slug') }}: {{ list.slug  }}</h6>
       </div>
       <div class="words">
         <div class="word-selectors">
@@ -118,7 +119,7 @@ export default {
 <style scoped>
 .list-property {
   margin: 0;
-  display: inline-block;
+  font-weight: 200;
   margin-right: 15px;
 }
 
