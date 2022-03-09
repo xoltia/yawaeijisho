@@ -26,7 +26,9 @@
       :title="$t('public')"
       :inputType="'checkbox'"
       :value="isPublic" @input="(value) => isPublic = value"/>
-    <div style="margin-top: 20px;">
+
+    <Loader v-if="creatingList"/>
+    <div v-else style="margin-top: 20px;">
       <a :class="['btn', canSubmit ? '' : 'disabled']" style="margin-right: 10px" @click="createList">{{ $t('submit') }}</a>
       <a class="btn invert" @click="closeModal">{{ $t('cancel') }}</a>
     </div>
@@ -77,7 +79,8 @@ export default {
       isPublic: true,
 
       // State relating to list creaton
-      errors: {}
+      errors: {},
+      creatingList: false
     }
   },
   setup() {
@@ -110,6 +113,7 @@ export default {
         return;
 
       this.errors = {};
+      this.creatingList = true;
       try
         {
           await this.listStore.createList({
@@ -118,8 +122,10 @@ export default {
             slug: this.autoSlug ? undefined : this.slug,
             public: this.isPublic
           });
+          this.creatingList = false;
           this.closeModal();
       } catch (e) {
+        this.creatingList = false;
         for (let err of (e.response.data.errors || [e.response.data])) {
           const param = err.error.split('_')[1].toLowerCase();
           const message = err.message;
