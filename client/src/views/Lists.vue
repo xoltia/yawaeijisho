@@ -112,10 +112,12 @@ export default {
       if (!this.canSubmit)
         return;
 
+      // Reset errors and show list is being created
       this.errors = {};
       this.creatingList = true;
       try
         {
+          // Try to create the list
           await this.listStore.createList({
             title: this.title,
             description: this.description,
@@ -125,7 +127,9 @@ export default {
           this.creatingList = false;
           this.closeModal();
       } catch (e) {
+        // Failed to create list
         this.creatingList = false;
+        // Parse errors and map to error object
         for (let err of (e.response.data.errors || [e.response.data])) {
           const param = err.error.split('_')[1].toLowerCase();
           const message = err.message;
