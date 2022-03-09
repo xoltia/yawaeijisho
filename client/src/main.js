@@ -3,12 +3,11 @@ import { createPinia } from 'pinia';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faBars, faChevronRight, faChevronLeft, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import axios from './axios';
-import VueAxios from 'vue-axios';
-
+import { createI18n } from 'vue-i18n';
 import App from './App.vue';
 import router from './router';
-import { createI18n } from 'vue-i18n';
+import axios from './axios';
+import VueAxios from 'vue-axios';
 import messages from './locals.json';
 
 library.add(
