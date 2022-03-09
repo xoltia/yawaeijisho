@@ -15,7 +15,7 @@ router.get('/', oneOf([
 ]), collectErrors, controller.getList);
 router.get('/mylists', isAuthorized, controller.getMyLists);
 router.get('/:id/words', controller.getListWords);
-router.post('/:id/words', [
+router.put('/:id/words', [
     isAuthorized,
     body()
         .isArray()
