@@ -6,6 +6,7 @@ export const useAuthStore = defineStore({
     return {
       token: localStorage.getItem('token'),
       userData: null,
+      isSigningIn: false
     };
   },
   getters: {
@@ -14,6 +15,7 @@ export const useAuthStore = defineStore({
   },
   actions: {
     async register(username, password) {
+      this.isSigningIn = true;
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
@@ -23,6 +25,8 @@ export const useAuthStore = defineStore({
           'Accept-Language': localStorage.getItem('preferences.lang') || navigator.language.split('-')[0]
         }
       });
+
+      this.isSigningIn = false;
 
       if (response.ok) {
         this.token = await response.json();
@@ -34,6 +38,8 @@ export const useAuthStore = defineStore({
       }
     },
     async login(username, password) {
+      this.isSigningIn = true;
+
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
@@ -42,6 +48,8 @@ export const useAuthStore = defineStore({
           'Accept-Language': localStorage.getItem('preferences.lang') || navigator.language.split('-')[0]
         }
       });
+      
+      this.isSigningIn = false;
 
       if (response.ok) {
         this.token = await response.json();

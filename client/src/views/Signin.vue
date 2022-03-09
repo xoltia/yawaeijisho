@@ -32,7 +32,8 @@
       :placeholder="$t('pwd-confirm-placeholder')"
     />
     <router-link to="/" class="link">{{ $t('return-home-link') }}</router-link>
-    <a :class="['btn', canSubmit ? '' : 'disabled']" @click="handleSubmit">
+    <Loader v-if="auth.isSigningIn" style="margin-top: 10px"/>
+    <a v-else :class="['btn', canSubmit ? '' : 'disabled']" @click="handleSubmit">
       {{ isSignup ? $t('signup-button'): $t('login-button') }}
     </a>
     <LocaleSwitcher :style="{ width: '50px', margin: 'auto', marginTop: '15px' }"/>
@@ -42,11 +43,13 @@
 <script>
 import { useAuthStore } from '../store/useAuthStore';
 import LocaleSwitcher from '../components/LocaleSwitcher.vue';
+import Loader from '../components/Loader.vue';
 
 export default {
   name: 'Signin',
   components: {
-    LocaleSwitcher
+    LocaleSwitcher,
+    Loader
   },
   setup() {
     const auth = useAuthStore();
