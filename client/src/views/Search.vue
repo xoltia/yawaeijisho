@@ -10,6 +10,7 @@
     <SearchBar
       @search-word="searchWord"
       :disabled="loadingWords"
+      ref="searchBar"
     />
     <Sentence
       v-if="this.sentenceWords.length > 0 && !loadingWords"
@@ -155,6 +156,10 @@ export default {
       // Keep track of the last full search so that the next page method knows what to search
       this.lastSearch = word;
       this.loadingWords = false;
+
+      // Wait for DOM updates then scroll down to show more results
+      await this.$nextTick();
+      this.$refs.searchBar.$el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     },
     async loadNextPage() {
       // Increase page count and show loading
