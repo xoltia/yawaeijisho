@@ -18,6 +18,8 @@ export default {
   watch: {
     show() {
       document.documentElement.style.overflow = this.show ? 'hidden' : 'auto';
+      // TODO: allow user to stay at scroll height
+      window.scrollTo(0, 0);
     }
   }
 }
