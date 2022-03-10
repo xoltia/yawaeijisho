@@ -228,4 +228,28 @@ export default {
   width: 75%;
   overflow-y: scroll;
 }
+
+@media only screen and (max-width: 600px) {
+  .words {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .word-selectors {
+    width: 100%;
+    display: flex;
+    height: 75px;
+  }
+
+  .word-selector {
+    white-space: nowrap;
+  }
+
+  .word-view {
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+  }
+}
 </style>
