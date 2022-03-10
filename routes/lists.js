@@ -13,6 +13,7 @@ router.get('/', oneOf([
         query('title').exists().isString()
     ],
 ]), collectErrors, controller.getList);
+router.delete('/:id', isAuthorized, controller.deleteList);
 router.get('/mylists', isAuthorized, controller.getMyLists);
 router.get('/:id/words', controller.getListWords);
 router.put('/:id/words', [

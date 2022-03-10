@@ -63,6 +63,12 @@ html, body {
   background: transparent;
 }
 
+.btn.danger {
+  border: 1px solid lightcoral;
+  background: lightcoral;
+  color: white;
+}
+
 .btn:hover {
   background: #a352ff;
   cursor: pointer;
@@ -70,6 +76,10 @@ html, body {
 
 .btn.invert:hover {
   color: white;
+}
+
+.btn.danger:hover {
+  background: #ff5151;
 }
 
 .btn.disabled {

@@ -33,6 +33,11 @@
       <a class="btn invert" @click="closeModal">{{ $t('cancel') }}</a>
     </div>
   </Modal>
+  <Modal :show="showDeleteModal" style="text-align: center">
+    <h4 style="margin-top: 0; margin-bottom: 40px">{{ $t('deletion-confirmation') }}</h4>
+    <a class="btn danger" style="margin: 5px;" @click="confirmDelete">{{ $t('delete') }}</a>
+    <a class="btn invert" style="margin: 5px;" @click="this.showDeleteModal = false">{{ $t('cancel') }}</a>
+  </Modal>
   <div class="slighly-narrow">
     <div class="header">
       <h1>{{ $t('my-lists') }}</h1>
@@ -44,6 +49,7 @@
         :key="list._id"
         :list="list"
         :tagData="tagData"
+        @delete="startDelete"
       />
     </div>
   </div>
@@ -70,6 +76,7 @@ export default {
     return {
       tagData: {},
       showCreateModal: false,
+      showDeleteModal: false,
 
       // Data for creating a new list
       title: '',
@@ -80,7 +87,10 @@ export default {
 
       // State relating to list creaton
       errors: {},
-      creatingList: false
+      creatingList: false,
+
+      // ID of list currently up for deletion (awaiting user confirmation)
+      pendingDeletion: null,
     }
   },
   setup() {
@@ -137,6 +147,15 @@ export default {
           this.errors[param].push({ name: err.error, message });
         }
       }
+    },
+    startDelete(id) {
+      //await this.listStore.deleteList(id);
+      this.pendingDeletion = id;
+      this.showDeleteModal = true;
+    },
+    confirmDelete() {
+      this.listStore.deleteList(this.pendingDeletion);
+      this.showDeleteModal = false;
     }
   }
 }

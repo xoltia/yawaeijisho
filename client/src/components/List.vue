@@ -11,6 +11,9 @@
         <h6 class="list-property">{{ $t('id') }}: {{ list._id  }}</h6>
         <h6 class="list-property">{{ $t('created-at') }}: {{ list.createdAt  }}</h6>
         <h6 class="list-property">{{ $t('slug') }}: {{ list.slug  }}</h6>
+        <h6 class="list-property">
+          <a class="list-action" @click="deleteMe">{{ $t('delete') }}</a>
+        </h6>
       </div>
       <div class="words">
         <div class="word-selectors">
@@ -33,7 +36,8 @@
             :compact="true"
           />
           <div style="text-align: center; margin-top: 100px" v-else>
-            {{ $t('nothing-added') }}
+            <font-awesome-icon icon="ghost" size="2x"/>
+            <p style="margin-top: 15px">{{ $t('nothing-added') }}</p>
           </div>
         </div>
       </div>
@@ -74,11 +78,15 @@ export default {
       return Math.max(0, this.listWordIDs.length - this.page * this.pageSize)
     }
   },
+  emits: ['delete'],
   methods: {
     wordSelectorLabel(word) {
       // Get kanji kana pair of first writing
       const [kanji, kana] = word.senses[0].writings[0];
       return kanji ? kanji + '・' + kana : kana;
+    },
+    deleteMe() {
+      this.$emit('delete', this.list._id);
     },
     async showList() {
       this.active = !this.active;
@@ -121,6 +129,14 @@ export default {
   margin: 0;
   font-weight: 200;
   margin-right: 15px;
+}
+
+.list-action {
+  text-decoration: underline;
+}
+
+.list-action:hover {
+  cursor: pointer;
 }
 
 .words {

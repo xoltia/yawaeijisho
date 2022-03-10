@@ -28,7 +28,16 @@ export const useListStore = defineStore({
       const response = await axios.post('/api/lists', list)
       if (response.status !== 200)
         throw new Error(response.data);
-      return this.lists.push(response.data);
+      this.lists.push(response.data);
+      return response.data;
+    },
+    async deleteList(listId) {
+      // Preemptively remove list from state (shouldn't fail)
+      this.lists = this.lists.filter(list => list._id !== listId);
+      // Tell API to delete list and remove from state list
+      const response = await axios.delete('/api/lists/' + listId);
+      if (response.status !== 200)
+        throw new Error(response.data);
     }
   }
 });

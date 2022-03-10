@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faBars, faChevronRight, faChevronLeft, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronRight, faChevronLeft, faChevronDown, faChevronUp, faGhost } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { createI18n } from 'vue-i18n';
 import App from './App.vue';
@@ -15,7 +15,8 @@ library.add(
     faChevronRight,
     faChevronLeft,
     faChevronDown,
-    faChevronUp
+    faChevronUp,
+    faGhost
 );
 
 const i18n = createI18n({

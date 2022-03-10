@@ -102,3 +102,17 @@ module.exports.postList = asyncHandler(async (req, res) => {
 
     res.json(list);
 });
+
+module.exports.deleteList = asyncHandler(async (req, res) => {
+    const list = await List.findById(req.params.id).select('words public creator');
+    
+    // Return 404 if trying to delete nonexistant list
+    if (!list)
+        return res.sendStatus(404);
+
+    // Delete only if creator of list
+    if (req.userId === list.creator.toString())
+        List.deleteOne({ _uid: req.params.id }).then(() => res.sendStatus(200));
+    else
+        res.sendStatus(401);
+});
