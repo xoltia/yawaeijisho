@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const IconvCP932 = require('iconv-cp932');
+const { useShiftJISMecab } = require('./config');
 
 /**
  * Parsed output type
@@ -37,13 +38,13 @@ function format(output) {
  */
 function parse(phrase, callback) {
     const mecab = spawn('mecab');
-    mecab.stdin.write(IconvCP932.encode(phrase));
+    mecab.stdin.write(useShiftJISMecab ? IconvCP932.encode(phrase) : phrase);
     mecab.stdin.end();
 
     let output = '';
 
     mecab.stdout.on('data', (data) => {
-      output += IconvCP932.decode(data);
+      output += useShiftJISMecab ? IconvCP932.decode(data) : data;
     });
     
     mecab.on('close', (_) => {

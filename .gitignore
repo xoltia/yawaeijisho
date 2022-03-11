@@ -28,3 +28,4 @@ jmdict-*.json
 
 # Saved index files
 *index*.json
+*Index*.json

@@ -24,7 +24,8 @@ const config = {
         }
     },
     cacheMax: process.env.CACHE_MAX_COUNT ? Number(process.env.CACHE_MAX_COUNT) : 10000,
-    cacheMaxAge: process.env.CACHE_MAX_AGE ? Number(process.env.CACHE_MAX_COUNT) : undefined
+    cacheMaxAge: process.env.CACHE_MAX_AGE ? Number(process.env.CACHE_MAX_COUNT) : undefined,
+    useShiftJISMecab: process.env.MECAB_SHIFT_JIS === 'true'
 };
 
 module.exports = config;
