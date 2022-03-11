@@ -21,11 +21,17 @@ export default {
     }
   },
   watch: {
-    show() {
+    show(isShowing) {
+      // Show scrolling again if modal isn't visible
+      if (!isShowing) {
+        document.documentElement.style.overflow = 'auto';
+        return;
+      }
+
       // Compute new scroll height to move modal to everytime it is going to be shown
       this.scrollHeight = (document.documentElement.scrollTop || document.body.scrollTop) + 'px';
       // No scrolling off of modal
-      document.documentElement.style.overflow = this.show ? 'hidden' : 'auto';
+      document.documentElement.style.overflow = 'hidden';
     }
   }
 }

@@ -77,6 +77,12 @@ export default {
     return {
       showMobileMenu: false
     }
+  },
+  watch: {
+    showMobileMenu(show) {
+      // Hide scrolling when looking at mobile menu
+      document.documentElement.style.overflow = show ? 'hidden' : 'auto';
+    }
   }
 }
 </script>
