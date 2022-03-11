@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-bg" v-show="show">
+    <div class="modal-bg" v-if="show" :style="{ top: scrollHeight }">
       <div class="modal">
         <slot></slot>
       </div>
@@ -9,6 +9,11 @@
 <script>
 export default {
   name: 'Modal',
+  data() {
+    return {
+      scrollHeight: '0px'
+    }
+  },
   props: {
     show: {
       type: Boolean,
@@ -17,9 +22,10 @@ export default {
   },
   watch: {
     show() {
+      // Compute new scroll height to move modal to everytime it is going to be shown
+      this.scrollHeight = (document.documentElement.scrollTop || document.body.scrollTop) + 'px';
+      // No scrolling off of modal
       document.documentElement.style.overflow = this.show ? 'hidden' : 'auto';
-      // TODO: allow user to stay at scroll height
-      window.scrollTo(0, 0);
     }
   }
 }
@@ -32,7 +38,6 @@ html, body {
 
 .modal-bg {
   position: absolute;
-  top: 0;
   left: 0;
   margin: 0;
   padding: 0;
@@ -42,6 +47,7 @@ html, body {
   justify-content: center;
   align-items: center;
   background: rgba(110, 110, 110, 0.3);
+  z-index: 2;
 }
 
 .modal {

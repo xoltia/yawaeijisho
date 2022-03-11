@@ -64,6 +64,26 @@ export default {
   display: block;
 }
 
+@media screen and (max-width: 500px) {
+  .input {
+    width: 250px;
+  }
+
+  textarea.input {
+    resize: auto;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .input {
+    width: 200px;
+  }
+
+  textarea.input {
+    resize: auto;
+  }
+}
+
 textarea.input {
   resize: vertical;
 }
