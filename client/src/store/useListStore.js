@@ -7,7 +7,9 @@ export const useListStore = defineStore({
     return {
       lists: [],
       isLoading: false,
-      intialized: false
+      intialized: false,
+      // May want to sync with API later
+      activeList: localStorage.getItem('activeList')
     };
   },
   actions: {
@@ -15,6 +17,12 @@ export const useListStore = defineStore({
       this.isLoading = true;
       const response = await axios.get('/api/lists/mylists');
       this.lists = response.data;
+      
+      // Every time lists are fetched make sure that the active
+      // list is still valid
+      if (this.activeList && !this.lists.some(list => list._id == this.activeList))
+        localStorage.removeItem('activeList');
+
       this.isLoading = false;
     },
     async getLists() {
@@ -36,6 +44,23 @@ export const useListStore = defineStore({
       this.lists = this.lists.filter(list => list._id !== listId);
       // Tell API to delete list and remove from state list
       const response = await axios.delete('/api/lists/' + listId);
+      if (response.status !== 200)
+        throw new Error(response.data);
+    },
+    setActiveList(listId) {
+      this.activeList = listId;
+      localStorage.setItem('activeList', listId);
+    },
+    async addWordToList(listId, wordId) {
+      const response = await axios.put(`/api/lists/${listId}/words`, [wordId]);
+      if (response.status !== 200)
+        throw new Error(response.data);
+    },
+    async addWordToActiveList(wordId) {
+      if (!this.activeList)
+        throw new Error('Tried adding word to active list but there is no active list.');
+
+      const response = await axios.put(`/api/lists/${this.activeList}/words`, [wordId]);
       if (response.status !== 200)
         throw new Error(response.data);
     }

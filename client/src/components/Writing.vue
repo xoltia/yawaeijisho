@@ -1,7 +1,9 @@
 <template>
-  <div style="display:flex;align-items:center;">
-    <h2 class="writing">{{ `${kanji ? `${kanji}・` : ''}${kana}` }}</h2>
-    <TagContainer :tags="tags" :tagLabelData="tagData"/>
+  <div style="display: inline-block" @mouseenter="showTags = true" @mouseleave="showTags = false">
+    <h2 class="writing"
+      :style="{ borderBottom: (tags.length > 0 && !showTags) ? '2px dotted #2c3e50' : ''  }"
+    >{{ `${kanji ? `${kanji}・` : ''}${kana}` }}</h2>
+    <TagContainer :tags="tags" :tagLabelData="tagData" v-show="showTags"/>
   </div>
 </template>
 
@@ -11,7 +13,12 @@ import TagContainer from './TagContainer.vue';
 export default {
   name: 'Writing',
   components: {
-      TagContainer
+    TagContainer
+  },
+  data() {
+    return {
+      showTags: false
+    };
   },
   props: {
     kanji: {

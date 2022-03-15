@@ -1,5 +1,6 @@
 <template>
   <Navbar :showHomeLink="false"/>
+  <ListSelector :show="showListSelector" @selected="addWordToList" @close="showListSelector = false"/>
   <div class="narrow">
     <h1 :class="[$i18n.locale !== 'ja' ? 'title with-sub' : 'title']">
       <text class="highlight">Ya</text>和英辞書
@@ -22,6 +23,10 @@
       :key="word.id"
       :word="word"
       :tagData="tagData"
+      :showListActions="authStore.isAuthenticated"
+      :hasActiveList="listStore.activeList !== null"
+      @add-to-list="beginAddWordToList"
+      @add-to-active="addWordToActiveList"
     />
     <span style="display: block" v-if="words.length > 0">
       <text v-if="totalWordCount != words.length"
@@ -45,9 +50,21 @@ import SearchResult from '../components/SearchResult.vue';
 import Loader from '../components/Loader.vue';
 import Sentence from '../components/Sentence.vue';
 import Navbar from '../components/Navbar.vue';
+import ListSelector from '../components/ListSelector.vue';
+import { useAuthStore } from '../store/useAuthStore';
+import { useListStore } from '../store/useListStore';
 
 export default {
   name: 'Search',
+  setup() {
+    const listStore = useListStore();
+    const authStore = useAuthStore();
+
+    return {
+      listStore,
+      authStore
+    };
+  },
   data() {
     return {
       words: [],
@@ -58,7 +75,10 @@ export default {
       pageSize: 25,
       totalWordCount: 0,
       sentenceWords: [],
-      errorName: ''
+      errorName: '',
+      showListSelector: false,
+      // Word currently waiting to be added to a list
+      wordToAdd: null
     }
   },
   components: {
@@ -66,7 +86,8 @@ export default {
     SearchResult,
     Loader,
     Sentence,
-    Navbar
+    Navbar,
+    ListSelector
   },
   async mounted() {
     // Load tag data
@@ -172,6 +193,18 @@ export default {
       this.words = [...this.words, ...nextPage];
       // Stop showing as loading
       this.loadingWords = false;
+    },
+    beginAddWordToList(word) {
+      this.wordToAdd = word;
+      this.showListSelector = true;
+    },
+    async addWordToList(list) {
+      await this.listStore.addWordToList(list, this.wordToAdd);
+      this.wordToAdd = null;
+      this.showListSelector = false;
+    },
+    async addWordToActiveList(word) {
+      await this.listStore.addWordToActiveList(word);
     }
   }
 }

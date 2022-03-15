@@ -9,7 +9,7 @@
       :errors="errors.title || []"/>
     <Input
       :title="$t('description')"
-      :paragraph="true"
+      inputType="paragraph"
       :value="description" @input="(value) => description = value"
       :errors="errors.description || []"/>
     <Input
@@ -20,11 +20,11 @@
       :errors="errors.slug || []"/>
     <Input
       :title="$t('auto-slug')"
-      :inputType="'checkbox'"
+      inputType="checkbox"
       :value="autoSlug" @input="(value) => autoSlug = value"/>
     <Input
       :title="$t('public')"
-      :inputType="'checkbox'"
+      inputType="checkbox"
       :value="isPublic" @input="(value) => isPublic = value"/>
 
     <Loader v-if="creatingList"/>

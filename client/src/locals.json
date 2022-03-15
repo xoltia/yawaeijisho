@@ -38,7 +38,10 @@
         "submit": "Submit",
         "cancel": "Cancel",
         "delete": "Delete",
-        "deletion-confirmation": "Are you sure you want to delete this list? This cannot be undone."
+        "deletion-confirmation": "Are you sure you want to delete this list? This cannot be undone.",
+        "make-active": "Make active list",
+        "select": "Select",
+        "select-and-make-active": "Select and make active"
     },
     "ja": {
         "home-link": "検索ページ",
@@ -78,6 +81,9 @@
         "submit": "投稿",
         "cancel": "キャンセル",
         "delete": "削除",
-        "deletion-confirmation": "本当に削除しますか？削除されたリストは復元できません。"
+        "deletion-confirmation": "本当に削除しますか？削除されたリストは復元できません。",
+        "make-active": "活動中リストにする",
+        "select": "選択",
+        "select-and-make-active": "活動中リストにして選択し"
     }
 }

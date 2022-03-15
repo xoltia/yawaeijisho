@@ -1,12 +1,20 @@
 <template>
   <h3 class="title">{{ title }}</h3>
-  <input v-if="!paragraph"
+  <textarea v-if="inputType === 'paragraph'" rows="4"
     :class="['input', errors.length > 0 ? 'error' : '']"
-    :type="inputType"
     :disabled="disabled"
     v-model="inputValue"/>
-  <textarea v-else rows="4"
+  <select v-else-if="inputType === 'select'"
     :class="['input', errors.length > 0 ? 'error' : '']"
+    :disabled="disabled"
+    v-model="inputValue">
+    <option v-for="[key, value] in Object.entries(options)" :value="key" :key="key">
+      {{ value }}
+    </option>
+  </select>
+  <input v-else
+    :class="['input', errors.length > 0 ? 'error' : '']"
+    :type="inputType"
     :disabled="disabled"
     v-model="inputValue"/>
   <div class="error-msg" v-for="err in errors" :key="err.name">
@@ -26,10 +34,6 @@ export default {
       type: String,
       default: 'text'
     },
-    paragraph: {
-      type: Boolean,
-      default: false
-    },
     disabled: {
       type: Boolean,
       default: false
@@ -38,7 +42,8 @@ export default {
     errors: {
       type: Array,
       default: () => []
-    }
+    },
+    options: Object
   },
   computed: {
     inputValue: {

@@ -1,7 +1,12 @@
 <template>
     <div class="modal-bg" v-if="show" :style="{ top: scrollHeight }">
       <div class="modal">
-        <slot></slot>
+        <div class="header" v-if="showX">
+          <font-awesome-icon icon="x" @click="$emit('close')" class="close-btn"></font-awesome-icon>
+        </div>
+        <div class="content" :style="showX ? { padding: '50px', paddingTop: '15px' } : { padding: '50px' }">
+          <slot></slot>
+        </div>
       </div>
     </div>
 </template>
@@ -18,8 +23,13 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    showX: {
+      type: Boolean,
+      default: false
     }
   },
+  emits: ['close'],
   watch: {
     show(isShowing) {
       // Show scrolling again if modal isn't visible
@@ -59,7 +69,16 @@ html, body {
 .modal {
   background: whitesmoke;
   border-radius: 7px;
-  padding: 50px;
+}
+
+.modal .header {
+  padding: 25px 50px 0 0;
+  text-align: right;
+}
+
+.modal .close-btn:hover {
+  cursor: pointer;
+  color: lightcoral;
 }
 
 @media only screen and (max-width: 600px) {
