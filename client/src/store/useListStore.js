@@ -20,9 +20,10 @@ export const useListStore = defineStore({
       
       // Every time lists are fetched make sure that the active
       // list is still valid
-      if (this.activeList && !this.lists.some(list => list._id == this.activeList))
+      if (this.activeList && !this.lists.some(list => list._id == this.activeList)) {
+        this.activeList = null;
         localStorage.removeItem('activeList');
-
+      }
       this.isLoading = false;
     },
     async getLists() {
