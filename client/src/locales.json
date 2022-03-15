@@ -41,7 +41,12 @@
         "deletion-confirmation": "Are you sure you want to delete this list? This cannot be undone.",
         "make-active": "Make active list",
         "select": "Select",
-        "select-and-make-active": "Select and make active"
+        "select-and-make-active": "Select and make active",
+        "add-to-active": "Add to active list",
+        "add-to-list": "Add to list",
+        "delete-from-list": "Delete from list",
+        "search-goo": "Search on goo dictionary"
+
     },
     "ja": {
         "home-link": "検索ページ",
@@ -84,6 +89,10 @@
         "deletion-confirmation": "本当に削除しますか？削除されたリストは復元できません。",
         "make-active": "活動中リストにする",
         "select": "選択",
-        "select-and-make-active": "活動中リストにして選択し"
+        "select-and-make-active": "活動中リストにして選択し",
+        "add-to-active": "活動中リストに追加",
+        "add-to-list": "リストに追加",
+        "delete-from-list": "リストから削除",
+        "search-goo": "Goo辞書で検索"
     }
 }

@@ -26,6 +26,13 @@ router.put('/:id/words', [
         .withMessage('Array must contain only valid word IDs'),
     collectErrors
 ], controller.addWordsToList);
+router.delete('/:id/words', [
+    isAuthorized,
+    body()
+        .isArray()
+        .withMessage('Body must be an array of word IDs'),
+    collectErrors
+], controller.deleteWordsFromList);
 //router.patch('/:id', controller.updateList);
 router.post('/', [
     isAuthorized,

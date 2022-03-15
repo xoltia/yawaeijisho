@@ -19,9 +19,18 @@
     </div>
 
     <div class="actions">
-      <a v-show="showListActions && hasActiveList" class="action" @click="$emit('add-to-active', word.id)">Add to active list</a>
-      <a v-show="showListActions" class="action" @click="$emit('add-to-list', word.id)">Add to list</a>
-      <a class="action" @click="searchOnGoo">Search on Goo Dictionary</a>
+      <a v-show="showListActions && showListAdd && hasActiveList" class="action" @click="$emit('add-to-active', word.id)">
+        {{ $t('add-to-active') }}
+      </a>
+      <a v-show="showListActions && showListAdd" class="action" @click="$emit('add-to-list', word.id)">
+        {{ $t('add-to-list') }}
+      </a>
+      <a v-show="showListActions && showListDelete" class="action" @click="$emit('delete-from-list', word.id)">
+        {{ $t('delete-from-list') }}
+      </a>
+      <a class="action" @click="searchOnGoo">
+        {{ $t('search-goo') }}
+      </a>
     </div>
   </div>
 </template>
@@ -46,9 +55,17 @@ export default {
     showListActions: {
       type: Boolean,
       default: false
+    },
+    showListAdd: {
+      type: Boolean,
+      default: true
+    },
+    showListDelete: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['add-to-list', 'add-to-active'],
+  emits: ['add-to-list', 'add-to-active', 'delete-from-list'],
   methods: {
     getTags(writing) {
       const [kanji, kana] = writing;

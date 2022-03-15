@@ -32,8 +32,11 @@
         <div class="word-view">
           <SearchResult v-if="listWords.length > 0"
             :word="listWords[selectedWord]"
+            :showListActions="true"
+            :showListAdd="false"
+            :showListDelete="true"
             :tagData="tagData"
-            :compact="true"
+            @delete-from-list="deleteWordFromList"
           />
           <div style="text-align: center; margin-top: 100px" v-else>
             <font-awesome-icon icon="ghost" size="2x"/>
@@ -48,12 +51,18 @@
 <script>
 import Loader from '../components/Loader.vue';
 import SearchResult from '../components/SearchResult.vue';
+import { useListStore } from '../store/useListStore';
 
 export default {
   name: 'List',
   components: {
     Loader,
     SearchResult
+  },
+  setup() {
+    const listStore = useListStore();
+
+    return { listStore };
   },
   data() {
     return {
@@ -118,6 +127,17 @@ export default {
 
       this.listWords.push(...response.data);
       this.page++;
+    },
+    async deleteWordFromList(word) {
+      // Delete word and reload list
+      await this.listStore.deleteWordFromList(this.list._id, word);
+      this.loadingWords = true;
+      this.listWords = [];
+      this.page = 0;
+      this.selectedWord = 0;
+      this.listWordIDs = await this.getWordIDs();
+      await this.loadNextWordPage();
+      this.loadingWords = false;
     }
   }
 }

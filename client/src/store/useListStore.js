@@ -64,6 +64,11 @@ export const useListStore = defineStore({
       const response = await axios.put(`/api/lists/${this.activeList}/words`, [wordId]);
       if (response.status !== 200)
         throw new Error(response.data);
+    },
+    async deleteWordFromList(listId, wordId) {
+      const response = await axios.delete(`/api/lists/${listId}/words`, { data: [wordId] });
+      if (response.status !== 200)
+        throw new Error(response.data);
     }
   }
 });

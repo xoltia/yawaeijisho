@@ -59,6 +59,28 @@ module.exports.addWordsToList = asyncHandler(async (req, res) => {
     res.sendStatus(200);
 });
 
+module.exports.deleteWordsFromList = asyncHandler(async (req, res) => {
+    const list = await List.findById(req.params.id).select('words creator');
+
+    // No list found
+    if (!list)
+        return res.sendStatus(404);
+    // If list is found make sure this user is the creator
+    // Pretend list doesn't exist if list isn't public and not authorized to change list
+    else if (list.creator.toString() !== req.userId)
+        return res.sendStatus(list.public ? 401 : 404);
+
+    await List.updateOne({ _id: list._id }, {
+        $pull: {
+            words: {
+                $in: req.body
+            }
+        }
+    });
+
+    res.sendStatus(200);
+});
+
 module.exports.getListWords = asyncHandler(async (req, res) => {
     const list = await List.findById(req.params.id).select('words public creator');
     

@@ -24,6 +24,8 @@
       :word="word"
       :tagData="tagData"
       :showListActions="authStore.isAuthenticated"
+      :showListAdd="true"
+      :showListDelete="false"
       :hasActiveList="listStore.activeList !== null"
       @add-to-list="beginAddWordToList"
       @add-to-active="addWordToActiveList"
