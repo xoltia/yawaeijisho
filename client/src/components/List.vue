@@ -8,10 +8,15 @@
     <div v-else>
       <div class="list-info">
         <p v-if="list.description">{{ list.description  }}</p>
-        <h6 class="list-property">{{ $t('id') }}: {{ list._id  }}</h6>
-        <h6 class="list-property">{{ $t('created-at') }}: {{ list.createdAt  }}</h6>
-        <h6 class="list-property">{{ $t('slug') }}: {{ list.slug  }}</h6>
-        <h6 class="list-property">
+        <div v-show="showDetails">
+          <h6 class="list-property">{{ $t('id') }}: {{ list._id  }}</h6>
+          <h6 class="list-property">{{ $t('created-at') }}: {{ list.createdAt  }}</h6>
+          <h6 class="list-property">{{ $t('slug') }}: {{ list.slug  }}</h6>
+        </div>
+        <h6 class="list-property" style="display: inline-block">
+          <a class="list-action" @click="showDetails = !showDetails">{{ showDetails ? $t('hide-details') : $t('show-details') }}</a>
+        </h6>
+        <h6 class="list-property" style="display: inline-block">
           <a class="list-action" @click="deleteMe">{{ $t('delete') }}</a>
         </h6>
       </div>
@@ -71,7 +76,8 @@ export default {
       listWords: [],
       loadingWords: true,
       active: false,
-      selectedWord: 0
+      selectedWord: 0,
+      showDetails: false
     }
   },
   props: {
@@ -152,7 +158,7 @@ export default {
 }
 
 .list-action {
-  text-decoration: underline;
+  font-weight: bold;
 }
 
 .list-action:hover {
@@ -176,7 +182,6 @@ export default {
   padding: 10px;
   font-weight: bold;
   color: #2c3e50;
-  /*border-bottom: 1px solid #2c3e50;*/
 }
 
 .word-selector:nth-child(even) {
@@ -212,6 +217,8 @@ export default {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   margin-bottom: 0;
+  border: 2px solid #2c3e50;
+  border-bottom: none;
 }
 
 .word-selector.active, .list-collapsible:hover {
@@ -233,6 +240,8 @@ export default {
   margin-bottom: 10px;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  border: 2px solid #2c3e50;
+  border-top: none;
 }
 
 .list-info {

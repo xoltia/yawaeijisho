@@ -45,8 +45,9 @@
         "add-to-active": "Add to active list",
         "add-to-list": "Add to list",
         "delete-from-list": "Delete from list",
-        "search-goo": "Search on goo dictionary"
-
+        "search-goo": "Search on goo dictionary",
+        "hide-details": "Hide details",
+        "show-details": "Show details"
     },
     "ja": {
         "home-link": "検索ページ",
@@ -93,6 +94,8 @@
         "add-to-active": "活動中リストに追加",
         "add-to-list": "リストに追加",
         "delete-from-list": "リストから削除",
-        "search-goo": "Goo辞書で検索"
+        "search-goo": "Goo辞書で検索",
+        "hide-details": "詳細を隠す",
+        "show-details": "詳細を表示"
     }
 }
