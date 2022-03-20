@@ -1,15 +1,26 @@
-const asyncHandler = require('express-async-handler');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const { tokenSecret } = require('../config');
+import asyncHandler from 'express-async-handler';
+import jwt from 'jsonwebtoken';
+import User, { IUser } from '../models/User';
+import config from '../config';
+import { Request, Response, NextFunction } from 'express';
+
+interface JwtPayload {
+    id: string
+};
+
+// Represents a request which may need to be authorized
+export interface AuthorizedRequest extends Request {
+    userId?: string,
+    user?: IUser
+};
 
 // Verifies that user has a valid token and adds the userId property to the request object
-module.exports.isAuthorized = (req, res, next, failCode=401) => {
+export function isAuthorized(req: AuthorizedRequest, res: Response, next: NextFunction, failCode: number=401): any {
     if (!req.headers.authorization)
         return res.sendStatus(failCode);
     try {
         // Verify token (format: Bearer token)
-        const payload = jwt.verify(req.headers.authorization.slice(7), tokenSecret);
+        const payload = jwt.verify(req.headers.authorization.slice(7), config.tokenSecret) as JwtPayload;
         // Add userId request object and continue
         req.userId = payload.id;
     } catch (e) {
@@ -23,7 +34,7 @@ module.exports.isAuthorized = (req, res, next, failCode=401) => {
 
 // Adds user object to request from userId
 // Unecessary unless user information is needed to prevent DB calls on every authorization
-module.exports.isUser = asyncHandler(async (req, res, next) => {
+export const isUser = asyncHandler(async (req: AuthorizedRequest, res, next): Promise<any> => {
     // Cannot continue if not authorized
     if (!req.userId)
         throw Error('isUser should not be called before isAuthorized');

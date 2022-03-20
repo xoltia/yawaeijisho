@@ -1,9 +1,11 @@
-const HIR_START = 'ぁ'.charCodeAt();
-const HIR_END = 'ゖ'.charCodeAt();
-const KAT_START = 'ァ'.charCodeAt();
-const CHOUONKIGOU = 'ー'.charCodeAt();
-const KURIKAESHIKIGOU = 'ゝ'.charCodeAt();
-const KAT_KURIKAESHIKIGOU = 'ヽ'.charCodeAt();
+type CompareFunction = (a: string, b: string) => number;
+
+const HIR_START = 'ぁ'.charCodeAt(0);
+const HIR_END = 'ゖ'.charCodeAt(0);
+const KAT_START = 'ァ'.charCodeAt(0);
+const CHOUONKIGOU = 'ー'.charCodeAt(0);
+const KURIKAESHIKIGOU = 'ゝ'.charCodeAt(0);
+const KAT_KURIKAESHIKIGOU = 'ヽ'.charCodeAt(0);
 const KOKAKIMOJI_MAP = createCharCodeMap({
     'ァ': 'ア',
     'ィ': 'イ',
@@ -50,33 +52,27 @@ const ONBIKI_MAP = createCharCodeMap({
 
 /**
  * Create a map with UTF-16 char code keys and values from an object
- * @param {Object<string, string>} obj
- * @returns {Map<Number, Number>} 
  */
-function createCharCodeMap(obj) {
+function createCharCodeMap(obj: Record<string, string>): Map<number, number> {
     return new Map(
         Object.entries(obj).map(([k, v]) =>
-            [k.charCodeAt(), v.charCodeAt()]
+            [k.charCodeAt(0), v.charCodeAt(0)]
         )
     );
 };
 
 /**
  * Whether kana is a kurikaeshi character
- * @param {Number} charCode
- * @returns {Boolean}
  */
-function isKurikaeshiKigou(charCode) {
+function isKurikaeshiKigou(charCode: number): boolean {
     return charCode === KURIKAESHIKIGOU || charCode === KURIKAESHIKIGOU + 1 ||
            charCode === KAT_KURIKAESHIKIGOU || charCode === KAT_KURIKAESHIKIGOU + 1;
 };
 
 /**
  * Creates array of character codes for comparison
- * @param {String} str
- * @returns {Uint16Array}
  */ 
-function createComparableChars(str) {
+function createComparableChars(str: string): Uint16Array {
     var buf = new ArrayBuffer(str.length * 2);
     var finalChars = new Uint16Array(buf);
     
@@ -95,7 +91,7 @@ function createComparableChars(str) {
             finalChars[i] = ONBIKI_MAP.get(finalChars[i - 1]);
         // If char code is even then it is the dakuten character
         else if (isKurikaeshiKigou(charCode) && i > 0)
-            finalChars[i] = finalChars[i - 1] + (charCode % 2 === 0);
+            finalChars[i] = finalChars[i - 1] + Number(charCode % 2 === 0);
         // Not a special case, just return the character
         else
             finalChars[i] = charCode;
@@ -113,7 +109,7 @@ function createComparableChars(str) {
  * @param {String} compareString Comparison kana string
  * @returns {Number} Negative if A occurs before B, positive if B after A, and 0 if A = B
  */
-function kanaStringCompare(referenceString, compareString) {
+function kanaStringCompare(referenceString: string, compareString: string): number {
     const comparableRef = createComparableChars(referenceString);
     const comparableComp = createComparableChars(compareString);
     const min = Math.min(referenceString.length, compareString.length);
@@ -134,7 +130,7 @@ function kanaStringCompare(referenceString, compareString) {
  * @param {String} compareString Comparison kana string
  * @returns {Number}
  */
-function kanjiStringCompare(referenceString, compareString) {
+function kanjiStringCompare(referenceString: string, compareString: string): number {
     return referenceString.localeCompare(compareString, 'ja');
 }
 
@@ -144,7 +140,7 @@ function kanjiStringCompare(referenceString, compareString) {
  * @param {function(String, String): Number} compareFunc 
  * @returns {function(String, String): Number}
  */
-function createStartsWithFunc(compareFunc) {
+function createStartsWithFunc(compareFunc: CompareFunction): CompareFunction {
     return (referenceString, compareString) => {
         const refLength = referenceString.length;
         const compLength = compareString.length;
@@ -152,6 +148,16 @@ function createStartsWithFunc(compareFunc) {
         return compareFunc(refStringBeginning, compareString);
     }
 }
+
+const kanaStringStartsWith = createStartsWithFunc(kanaStringCompare);
+const kanjiStringStartsWith = createStartsWithFunc(kanjiStringCompare);
+
+export {
+    kanaStringStartsWith,
+    kanjiStringStartsWith,
+    kanaStringCompare,
+    kanjiStringCompare
+};
 
 
 module.exports = {

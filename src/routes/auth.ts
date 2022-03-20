@@ -1,7 +1,9 @@
-const router = require('express').Router();
-const controller = require('../controllers/auth');
-const { body } = require('express-validator');
-const { collectErrors, createValidationHandler } = require('../middleware/errors');
+import { Router } from 'express';
+import * as controller from '../controllers/auth';
+import { body } from 'express-validator';
+import { createValidationHandler, collectErrors } from '../middleware/errors';
+
+const router = Router();
 
 router.post('/signup', [
     body('username')
@@ -25,4 +27,4 @@ router.post('/signin', [
     collectErrors
 ], controller.signIn);
 
-module.exports = router;
+export default router;

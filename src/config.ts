@@ -1,11 +1,41 @@
-require('dotenv').config();
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+dotenv.config();
 
-const config = {
+type Port = string | number;
+
+interface DbConfig {
+    host: string,
+    port: Port,
+    name: string,
+    username?: string,
+    password?: string,
+    connectionString: string
+};
+
+interface Config {
+    publicFolder: string,
+    jmdictLocation: string,
+    useIndexFile: boolean,
+    isProduction: boolean,
+    maxPageSize: number,
+    port: Port
+    tokenSecret: string,
+    db: DbConfig,
+    cacheMax: number,
+    cacheMaxAge: number,
+    useShiftJISMecab: boolean,
+};
+
+const config: Config = {
+    publicFolder: process.env.PUBLIC_FOLDER || path.join(__dirname, '../client/dist'),
     jmdictLocation: process.env.JMDICT_LOCATION,
     useIndexFile: process.env.USE_INDEX_FILE === 'true',
     isProduction: process.env.NODE_ENV === 'production',
     maxPageSize: process.env.MAX_PAGE_SIZE ? Number(process.env.MAX_PAGE_SIZE) : 25,
-    port: process.env.PORT || (this.isProduction ? 80 : 3080),
+    get port() {
+        return process.env.PORT || (this.isProduction ? 80 : 3080)
+    },
     tokenSecret: process.env.TOKEN_SECRET,
     db: {
         host: process.env.DB_HOST || 'localhost',
@@ -28,4 +58,4 @@ const config = {
     useShiftJISMecab: process.env.MECAB_SHIFT_JIS === 'true'
 };
 
-module.exports = config;
+export default config;

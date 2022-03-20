@@ -1,10 +1,12 @@
 /* Base /api routes */
-const router = require('express').Router();
-const controller = require('../controllers');
-const { query } = require('express-validator');
-const { maxPageSize } = require('../config');
-const { collectErrors } = require('../middleware/errors');
-const jmdict = require('../jmdict');
+import { Router } from 'express';
+import * as controller from '../controllers';
+import { query } from 'express-validator';
+import config from '../config';
+import { collectErrors } from '../middleware/errors';
+import JMDict from '../jmdict';
+
+const router = Router();
 
 router.get('/words', [
     query('id')
@@ -12,7 +14,7 @@ router.get('/words', [
         .withMessage('Query must contain ID(s)')
         .bail()
         .customSanitizer(input => input.split(','))
-        .custom((array) => array.reduce((previous, current) => previous && jmdict.isValidId(current), array.length > 0))
+        .custom((array) => array.reduce((previous, current) => previous && JMDict.isValidId(current), array.length > 0))
         .withMessage('Query must be a list of comma seperated JMDict IDs.'),
     collectErrors
 ], controller.getMultipleByIds)
@@ -21,8 +23,8 @@ router.get('/tags', controller.tags);
 router.get('/count/:word', controller.count);
 router.get('/define/:word', [
     query('page').isInt().default(0),
-    query('size').isInt({ min: 1 }).default(maxPageSize)
+    query('size').isInt({ min: 1 }).default(config.maxPageSize)
 ], controller.define);
 router.get('/wakachi/:phrase', controller.wakachi);
 
-module.exports = router;
+export default router;

@@ -1,10 +1,12 @@
-const router = require('express').Router();
-const controller = require('../controllers/lists');
-const { body, query, oneOf } = require('express-validator');
-const { isAuthorized } = require('../middleware/authorization');
-const { createValidationHandler, collectErrors } = require('../middleware/errors');
-const { v4: uuidv4 } = require('uuid');
-const jmdict = require('../jmdict');
+import { Router } from 'express';
+import * as controller from '../controllers/lists';
+import { body, query, oneOf } from 'express-validator';
+import { isAuthorized } from '../middleware/authorization';
+import { createValidationHandler, collectErrors } from '../middleware/errors';
+import uuid from 'uuid';
+import JMDict from '../jmdict';
+
+const router = Router();
 
 router.get('/', oneOf([
     query('id').exists().isMongoId(),
@@ -22,7 +24,7 @@ router.put('/:id/words', [
         .isArray()
         .withMessage('Body must be an array of word IDs')
         .bail()
-        .custom((array) => array.reduce((previous, current) => previous && jmdict.isValidId(current), array.length > 0))
+        .custom((array: string[]) => array.reduce((previous, current) => previous && JMDict.isValidId(current), array.length > 0))
         .withMessage('Array must contain only valid word IDs'),
     collectErrors
 ], controller.addWordsToList);
@@ -44,7 +46,7 @@ router.post('/', [
         .isLength({ max: 30 })
         .withMessage(createValidationHandler('LISTS_TITLE_LONG')),
     body('slug')
-        .customSanitizer((input) => input || uuidv4())
+        .customSanitizer((input) => input || uuid.v4())
         .isLength({ min:  3 })
         .withMessage(createValidationHandler('LISTS_SLUG_SHORT')).bail()
         .isLength({ max: 36 })
@@ -60,4 +62,4 @@ router.post('/', [
     collectErrors
 ], controller.postList);
 
-module.exports = router;
+export default router;

@@ -2,27 +2,22 @@ const { spawn } = require('child_process');
 const IconvCP932 = require('iconv-cp932');
 const { useShiftJISMecab } = require('./config');
 
-/**
- * Parsed output type
- * @typedef {Array<[String, {
- *    品詞: string,
- *    品詞細分類1: string,
- *    品詞細分類2: string,
- *    品詞細分類3: string,
- *    活用型: string,
- *    活用形: string,
- *    原形: string,
- *    読み: string,
- *    発音: string
- * }]>} MecabOutput
- */
+type MecabOutput = Array<[String, {
+    品詞: string,
+    品詞細分類1: string,
+    品詞細分類2: string,
+    品詞細分類3: string,
+    活用型: string,
+    活用形: string,
+    原形: string,
+    読み: string,
+    発音: string
+}]>;
 
 /**
  * Parse stdout from mecab
- * @param {String} output 
- * @returns {MecabOutput}
  */
-function format(output) {
+function format(output: string): MecabOutput {
     // Split by line and ignore last two lines (EOS and empty line)
     return output.split('\n').slice(0, -2).map(line => {
         const [word, info] = line.split('\t');
@@ -33,10 +28,8 @@ function format(output) {
 
 /**
  * Passes a phrase string as input to mecab and returns the output as an object
- * @param {String} phrase 
- * @param {function(MecabOutput)} callback 
  */
-function parse(phrase, callback) {
+export function parse(phrase: string, callback: (output: MecabOutput) => void): void {
     const mecab = spawn('mecab');
     mecab.stdin.write(useShiftJISMecab ? IconvCP932.encode(phrase) : phrase);
     mecab.stdin.end();
@@ -51,5 +44,3 @@ function parse(phrase, callback) {
       callback(format(output));
     });
 }
-
-module.exports = { parse };

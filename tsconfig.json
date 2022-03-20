@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "allowJs": true,
+        "module": "CommonJS",
+        "target": "es6",
+        "downlevelIteration": true,
+        "esModuleInterop": true
+    },
+    "include": ["./src/**/*"]
+}

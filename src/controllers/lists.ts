@@ -1,18 +1,18 @@
-const asyncHandler = require('express-async-handler');
-const List = require('../models/List');
-const User = require('../models/User');
-const { isAuthorized } = require('../middleware/authorization');
-const { createError } = require('../middleware/errors');
+import asyncHandler from 'express-async-handler';
+import List, { IList } from '../models/List';
+import User from '../models/User';
+import { isAuthorized, AuthorizedRequest } from '../middleware/authorization';
+import { createError } from '../middleware/errors';
 
-module.exports.getMyLists = asyncHandler(async (req, res) => {
+export const getMyLists = asyncHandler(async (req: AuthorizedRequest, res) => {
     const creator = req.userId;
     const lists = await List.find({ creator });
     res.json(lists);
 });
 
-module.exports.getList = asyncHandler(async (req, res) => {
+export const getList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
     const { username, title, id } = req.query;
-    let list;
+    let list: IList;
 
     if (id) {
         list = await List.findById(id);
@@ -37,7 +37,7 @@ module.exports.getList = asyncHandler(async (req, res) => {
     }, 404);
 });
 
-module.exports.addWordsToList = asyncHandler(async (req, res) => {
+export const addWordsToList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
     const list = await List.findById(req.params.id).select('words creator');
 
     // No list found
@@ -59,7 +59,7 @@ module.exports.addWordsToList = asyncHandler(async (req, res) => {
     res.sendStatus(200);
 });
 
-module.exports.deleteWordsFromList = asyncHandler(async (req, res) => {
+export const deleteWordsFromList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
     const list = await List.findById(req.params.id).select('words creator');
 
     // No list found
@@ -81,7 +81,7 @@ module.exports.deleteWordsFromList = asyncHandler(async (req, res) => {
     res.sendStatus(200);
 });
 
-module.exports.getListWords = asyncHandler(async (req, res) => {
+export const getListWords = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
     const list = await List.findById(req.params.id).select('words public creator');
     
     if (!list)
@@ -99,12 +99,12 @@ module.exports.getListWords = asyncHandler(async (req, res) => {
     }, 404);
 });
 
-module.exports.postList = asyncHandler(async (req, res) => {
+export const postList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
     const {
         title,
         description,
         slug,
-        public
+        public: pub
     } = req.body;
 
     const list = new List({
@@ -112,7 +112,7 @@ module.exports.postList = asyncHandler(async (req, res) => {
         title,
         description,
         slug,
-        public
+        public: pub
     });
 
     try {
@@ -125,7 +125,7 @@ module.exports.postList = asyncHandler(async (req, res) => {
     res.json(list);
 });
 
-module.exports.deleteList = asyncHandler(async (req, res) => {
+export const deleteList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
     const list = await List.findById(req.params.id).select('words public creator');
     
     // Return 404 if trying to delete nonexistant list

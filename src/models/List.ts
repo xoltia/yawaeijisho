@@ -1,8 +1,18 @@
-const mongoose = require('mongoose');
+import { Types, Schema, model } from 'mongoose';
 
-const ListSchema = new mongoose.Schema({
+export interface IList {
+    creator: Types.ObjectId,
+    slug: string,
+    title: string,
+    description?: string,
+    words: string[],
+    public: boolean,
+
+}
+
+const ListSchema = new Schema({
     creator: {
-        type: mongoose.Types.ObjectId,
+        type: Types.ObjectId,
         ref: 'User',
         required: true,
         index: true
@@ -32,4 +42,4 @@ const ListSchema = new mongoose.Schema({
 
 ListSchema.index({ creator: 1, slug: 1 }, { unique: true });
 
-module.exports = mongoose.model('List', ListSchema);
+export default model<IList>('List', ListSchema);

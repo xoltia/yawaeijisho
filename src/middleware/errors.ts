@@ -5,9 +5,30 @@
  * will originate and the field hints at what aspect of the
  * request caused the error (or $ for omission of field)
  */
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
+import { Request, Response } from 'express';
+import { NextFunction } from 'express-serve-static-core';
 
-const en = {
+type ErrorName =
+    '$_$_CLIENT_ERROR' |
+
+    'AUTH_USERNAME_NULL' | 'AUTH_USERNAME_SHORT' |  'AUTH_USERNAME_LONG' |
+    'AUTH_USERNAME_NON_STRING'| 'AUTH_USERNAME_TAKEN' | 'AUTH_PASSWORD_NULL' |
+    'AUTH_PASSWORD_NON_STRING' | 'AUTH_PASSWORD_WEAK' | 'AUTH_$_INCORRECT_CREDENTIALS' |
+
+    'LISTS_TITLE_SHORT' | 'LISTS_TITLE_LONG' | 'LISTS_SLUG_SHORT' | 'LISTS_SLUG_LONG' |
+    'LISTS_SLUG_NOT_UNIQUE' | 'LISTS_DESCRIPTION_LONG';
+
+type Locale = 'ja' | 'en';
+type ErrorSource = Record<ErrorName, string>;
+type ErrorSources = Record<Locale, ErrorSource>;
+
+interface APIError {
+    error: ErrorName,
+    message: string
+}
+
+const en: ErrorSource = {
     '$_$_CLIENT_ERROR': 'An unexpected error has occured.',
     'AUTH_USERNAME_NULL': 'A username is required.',
     'AUTH_USERNAME_SHORT': 'Username must be at least {0} chracters long.',
@@ -18,15 +39,15 @@ const en = {
     'AUTH_PASSWORD_NON_STRING': 'Password must be a string.',
     'AUTH_PASSWORD_WEAK': 'Password is too weak.',
     'AUTH_$_INCORRECT_CREDENTIALS': 'Username or password is incorrect.',
-    'LISTS_TITLE_TOO_SHORT': 'Title is too short.',
-    'LISTS_TITLE_TOO_LONG': 'Title is too long.',
-    'LISTS_SLUG_TOO_SHORT': 'Slug is too short.',
-    'LISTS_SLUG_TOO_LONG': 'Slug is too long.',
+    'LISTS_TITLE_SHORT': 'Title is too short.',
+    'LISTS_TITLE_LONG': 'Title is too long.',
+    'LISTS_SLUG_SHORT': 'Slug is too short.',
+    'LISTS_SLUG_LONG': 'Slug is too long.',
     'LISTS_SLUG_NOT_UNIQUE': 'Slugs must be unique.',
-    'LISTS_DESCRIPTION_TOO_LONG': 'Description is too long.',
+    'LISTS_DESCRIPTION_LONG': 'Description is too long.',
 };
 
-const ja =  {
+const ja: ErrorSource = {
     '$_$_CLIENT_ERROR': '予想外のエラーが発生しました。',
     'AUTH_USERNAME_NULL': 'ユーザー名が必要です。',
     'AUTH_USERNAME_SHORT': 'ユーザー名が{0}文字以上である必要があります。',
@@ -45,16 +66,12 @@ const ja =  {
     'LISTS_DESCRIPTION_LONG': '説明が長い過ぎます。',
 };
 
-const sources = { ja, en };
+const sources: ErrorSources = { ja, en };
 
 /**
  * Create a response object based on an error
- * @param req
- * @param {String} errorName
- * @param {Array} args Format arguments
- * @returns { error: String, message: String }
  */
-function createError(req, errorName, args) {
+function createError(req: Request, errorName: ErrorName, ...args: any[]): APIError {
     const lang = req.acceptsLanguages('ja') ? 'ja' : 'en';
     return {
         error: errorName,
@@ -67,10 +84,10 @@ function createError(req, errorName, args) {
  * Ex. format string: 'Showing {0} of {1} results.'
  * will result in string of `Showing {args[0]} of {args[1]} results.`
  * @param {String} str String to be formated
- * @param  {...any} args Arguments to format string with
+ * @param  {Array<any>} args Arguments to format string with
  * @returns {String} The formated string
  */
-function format(str, ...args) {
+function format(str: String, ...args: any[]): string {
     return str.replace(/{(\d+)}/g, function(match, number) { 
         return typeof args[number] != 'undefined'
           ? args[number]
@@ -82,10 +99,10 @@ function format(str, ...args) {
 /**
  * Create a function for creating errors with express validator
  * @param {String} errorName
- * @param {*} args Format arguments
+ * @param {Array<any>} args Format arguments
  */
-function createValidationHandler(errorName, args) {
-    return (_, { req }) => {
+function createValidationHandler(errorName: ErrorName, ...args: any[]): (any, { req: Request }) => APIError {
+    return (_, { req }: { req: Request }) => {
         return createError(req, errorName, args);
     };
 }
@@ -94,7 +111,7 @@ function createValidationHandler(errorName, args) {
  * Middleware to check for errors from express validator and responds with an
  * error code and object containing the errors if errors.
  */
- function collectErrors(req, res, next) {
+ function collectErrors(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
     if (errors.isEmpty())
         return next();
@@ -103,13 +120,13 @@ function createValidationHandler(errorName, args) {
         // If error message is default express-validator error then
         // the error was not caused by user input
         errors: errors.array().map(err => err.msg.error ? err.msg : {
-            ...createError(req, '$_$_CLIENT_ERROR'),
+            ...createError(req, '$_$_CLIENT_ERROR', null, null),
             details: err
         }),
     });
 }
 
-module.exports = {
+export {
     createValidationHandler,
     collectErrors,
     createError

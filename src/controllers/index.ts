@@ -1,21 +1,21 @@
-const jmdict = require('../jmdict');
-const { parse } = require('../mecab');
-const { validationResult } = require('express-validator');
-const LRU = require('lru-cache');
-const config = require('../config');
+import { Request, Response } from 'express';
+import LRU from 'lru-cache';
+import { validationResult } from 'express-validator';
+import JMDict from '../jmdict';
+import { parse } from '../mecab';
+import config from '../config';
+import { DefaultWordType } from '../jmdict/mapper';
 
-const cache = new LRU({
+const cache = new LRU<string, DefaultWordType[]>({
     max: config.cacheMax,
-    maxAge: config.cachMaxAge
+    maxAge: config.cacheMaxAge
 });
 
-function getEntries(word) {
+function getEntries(word: string) {
     if (cache.has(word))
         return cache.get(word);
         
-    const entries = /^[\u3040-\u309f\u30a0-\u30ff]+$/.test(word) ?
-           jmdict.searchKana(word) :
-           jmdict.searchKanji(word);
+    const entries = JMDict.searchIndex(/^[\u3040-\u309f\u30a0-\u30ff]+$/.test(word) ? 'kana' : 'kanji', word);
 
     // TODO: Maybe this should be done when creating indexes?
     entries.sort((a, b) => {
@@ -35,11 +35,11 @@ function getEntries(word) {
     return entries;
 }
 
-module.exports.tags = (_, res) => {
-    res.json(jmdict.tags);
+export const tags = (_: Request, res: Response) => {
+    res.json(JMDict.tags);
 };
 
-module.exports.define = (req, res) => {
+export const define = (req: Request, res: Response) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -55,30 +55,31 @@ module.exports.define = (req, res) => {
     res.json(entries.slice(rangeStart, rangeEnd));
 };
 
-module.exports.count = (req, res) => {
+export const count = (req: Request, res: Response) => {
     res.json(getEntries(req.params.word).length);
 };
 
-module.exports.getById = (req, res) => {
+export const getById = (req: Request, res: Response) => {
     // 404 if no word with ID exists
-    const word = jmdict.getWord(req.params.id);
+    const word = JMDict.getWord(req.params.id);
     if (!word)
         return res.sendStatus(404);
     res.json(word);
 };
 
-module.exports.getMultipleByIds = (req, res) => {
+export const getMultipleByIds = (req: Request, res: Response) => {
+    const ids = req.query.id as string[];
     // Don't send more words than would be allowed with a normal search
-    req.query.id.length = Math.min(req.query.id.length, config.maxPageSize);
+    ids.length = Math.min(ids.length, config.maxPageSize);
 
     // At this point API will have errors if any of the IDs were invalid
     // so mapping should work without checking for invalid IDs
-    const words = req.query.id.map(id => jmdict.getWord(id));
+    const words = ids.map(id => JMDict.getWord(id));
     
     res.json(words);
 };
 
-module.exports.wakachi = (req, res) => {
+export const wakachi = (req: Request, res: Response) => {
     parse(req.params.phrase, (result) => {
         const response = result.map(data => [
             data[0],

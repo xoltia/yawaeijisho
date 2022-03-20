@@ -1,7 +1,13 @@
-const { Schema, model } = require('mongoose');
-const bcrypt = require('bcryptjs');
+import { Schema, model } from 'mongoose';
+import * as bcrypt from 'bcryptjs';
 
-const UserSchema = new Schema({
+export interface IUser {
+    username: string,
+    password: string,
+    comparePassword(string: string): Promise<boolean>
+}
+
+const UserSchema = new Schema<IUser>({
     username: {
         type: String,
         required: true,
@@ -35,4 +41,4 @@ UserSchema.methods.comparePassword = function(password) {
     });
 }
 
-module.exports = model('User', UserSchema);
+export default model<IUser>('User', UserSchema);
