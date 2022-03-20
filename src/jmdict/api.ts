@@ -11,13 +11,13 @@ const writeFile = promisify(fs.writeFile);
  * original list and the order should not be altered!
  */
 
-export type XRef = [string, string, number?] | [string, number] | [string];
+export type XRef = [string, string, number] | [string, number | string] | [string];
 
 export interface JMDictKanji {
     common: boolean,
     text: string,
     tags: string[]
-}
+};
 
 export interface JMDictKana extends JMDictKanji {
     appliesToKanji: string[]
