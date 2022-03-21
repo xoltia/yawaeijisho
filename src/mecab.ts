@@ -1,6 +1,6 @@
-const { spawn } = require('child_process');
-const IconvCP932 = require('iconv-cp932');
-const { useShiftJISMecab } = require('./config');
+import { spawn } from 'child_process';
+import * as IconvCP932 from 'iconv-cp932';
+import config from './config';
 
 type MecabOutput = Array<[String, {
     品詞: string,
@@ -31,13 +31,13 @@ function format(output: string): MecabOutput {
  */
 export function parse(phrase: string, callback: (output: MecabOutput) => void): void {
     const mecab = spawn('mecab');
-    mecab.stdin.write(useShiftJISMecab ? IconvCP932.encode(phrase) : phrase);
+    mecab.stdin.write(config.useShiftJISMecab ? IconvCP932.encode(phrase) : phrase);
     mecab.stdin.end();
 
     let output = '';
 
     mecab.stdout.on('data', (data) => {
-      output += useShiftJISMecab ? IconvCP932.decode(data) : data;
+      output += config.useShiftJISMecab ? IconvCP932.decode(data) : data;
     });
     
     mecab.on('close', (_) => {
