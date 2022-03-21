@@ -158,11 +158,3 @@ export {
     kanaStringCompare,
     kanjiStringCompare
 };
-
-
-module.exports = {
-    kanaStringCompare,
-    kanaStringStartsWith: createStartsWithFunc(kanaStringCompare),
-    kanjiStringCompare,
-    kanjiStringStartsWith: createStartsWithFunc(kanjiStringCompare),
-};
