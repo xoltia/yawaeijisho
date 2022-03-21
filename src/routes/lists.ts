@@ -3,7 +3,7 @@ import * as controller from '../controllers/lists';
 import { body, query, oneOf } from 'express-validator';
 import { isAuthorized } from '../middleware/authorization';
 import { createValidationHandler, collectErrors } from '../middleware/errors';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import JMDict from '../jmdict';
 
 const router = Router();
@@ -46,7 +46,7 @@ router.post('/', [
         .isLength({ max: 30 })
         .withMessage(createValidationHandler('LISTS_TITLE_LONG')),
     body('slug')
-        .customSanitizer((input) => input || uuid.v4())
+        .customSanitizer((input) => input || uuidv4())
         .isLength({ min:  3 })
         .withMessage(createValidationHandler('LISTS_SLUG_SHORT')).bail()
         .isLength({ max: 36 })
