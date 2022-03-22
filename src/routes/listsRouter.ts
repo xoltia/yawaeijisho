@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as controller from '../controllers/lists';
+import { listsController } from '../controllers';
 import { body, query, oneOf } from 'express-validator';
 import { isAuthorized } from '../middleware/authorization';
 import { createValidationHandler, collectErrors } from '../middleware/errors';
@@ -14,10 +14,10 @@ router.get('/', oneOf([
         query('username').exists().isString(),
         query('title').exists().isString()
     ],
-]), collectErrors, controller.getList);
-router.delete('/:id', isAuthorized, controller.deleteList);
-router.get('/mylists', isAuthorized, controller.getMyLists);
-router.get('/:id/words', controller.getListWords);
+]), collectErrors, listsController.getList);
+router.delete('/:id', isAuthorized, listsController.deleteList);
+router.get('/mylists', isAuthorized, listsController.getMyLists);
+router.get('/:id/words', listsController.getListWords);
 router.put('/:id/words', [
     isAuthorized,
     body()
@@ -27,15 +27,14 @@ router.put('/:id/words', [
         .custom((array: string[]) => array.reduce((previous, current) => previous && JMDict.isValidId(current), array.length > 0))
         .withMessage('Array must contain only valid word IDs'),
     collectErrors
-], controller.addWordsToList);
+], listsController.addWordsToList);
 router.delete('/:id/words', [
     isAuthorized,
     body()
         .isArray()
         .withMessage('Body must be an array of word IDs'),
     collectErrors
-], controller.deleteWordsFromList);
-//router.patch('/:id', controller.updateList);
+], listsController.deleteWordsFromList);
 router.post('/', [
     isAuthorized,
     body('title')
@@ -60,6 +59,6 @@ router.post('/', [
         .default(true)
         .isBoolean(),
     collectErrors
-], controller.postList);
+], listsController.postList);
 
 export default router;

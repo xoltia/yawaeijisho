@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { isAuthorized, isUser } from '../middleware/authorization';
-import { me, exists } from '../controllers/users';
+import { usersController } from '../controllers';
 
 const router = Router();
 
 router.get('/me', [
     isAuthorized,
     isUser
-], me);
+], usersController.me);
 
-router.get('/exists/:username', exists);
+router.get('/exists/:username', usersController.exists);
 
 export default router;

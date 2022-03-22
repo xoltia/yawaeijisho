@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as controller from '../controllers/auth';
+import { authController } from '../controllers';
 import { body } from 'express-validator';
 import { createValidationHandler, collectErrors } from '../middleware/errors';
 
@@ -16,7 +16,7 @@ router.post('/signup', [
         .isString().withMessage(createValidationHandler('AUTH_PASSWORD_NON_STRING')).bail()
         .isStrongPassword().withMessage(createValidationHandler('AUTH_PASSWORD_WEAK')),
     collectErrors
-], controller.signUp);
+], authController.signUp);
 router.post('/signin', [
     body('username')
         .exists({ checkFalsy: true }).withMessage(createValidationHandler('AUTH_USERNAME_NULL')).bail()
@@ -25,6 +25,6 @@ router.post('/signin', [
         .exists({ checkFalsy: true }).withMessage(createValidationHandler('AUTH_PASSWORD_NULL')).bail()
         .isString().withMessage(createValidationHandler('AUTH_PASSWORD_NON_STRING')),
     collectErrors
-], controller.signIn);
+], authController.signIn);
 
 export default router;

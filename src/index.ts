@@ -2,18 +2,20 @@ import express from 'express';
 import mongoose from 'mongoose';
 import config from './config';
 import { setup as setupJMDict } from './jmdict';
-import baseRouter from './routes';
-import authRouter from './routes/auth';
-import userRouter from './routes/users';
-import listRouter from './routes/lists';
+import {
+    baseRouter,
+    authRouter,
+    usersRouter,
+    listsRouter
+} from './routes';
 
 const app = express();
 
 app.use(express.json());
 app.use('/api', baseRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/users', userRouter);
-app.use('/api/lists', listRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/lists', listsRouter);
 
 // If environment set to production serve built client files
 if (config.isProduction) {
