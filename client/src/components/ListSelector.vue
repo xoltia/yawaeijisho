@@ -37,7 +37,10 @@ export default {
     }
   },
   props: {
-    show: Boolean
+    show: Boolean,
+    disabledLists: {
+      type: Array
+    }
   },
   setup() {
     const listStore = useListStore();
@@ -48,12 +51,14 @@ export default {
   },
   computed: {
     listOptions() {
-      return this.listStore.lists.reduce((dict, list) => {
+      return this.listStore.lists.map(list => {
+        const disabled = this.disabledLists.includes(list._id);
         return {
-          [list._id]: list.title,
-          ...dict
+          value: list._id,
+          text: list.title + (disabled ? ` (${this.$t('already-in-list')})` : ''),
+          disabled
         };
-      }, {});
+      });
     }
   },
   methods: {

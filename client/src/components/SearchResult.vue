@@ -19,8 +19,8 @@
     </div>
 
     <div class="actions">
-      <a v-show="showListActions && showListAdd && hasActiveList" class="action" @click="$emit('add-to-active', word.id)">
-        {{ $t('add-to-active') }}
+      <a v-show="showListActions && showListAdd && hasActiveList" :class="['action', alreadyInActiveList ? 'disabled': '']" @click="addToActive">
+        {{ alreadyInActiveList ? $t('already-in-active') : $t('add-to-active') }}
       </a>
       <a v-show="showListActions && showListAdd" class="action" @click="$emit('add-to-list', word.id)">
         {{ $t('add-to-list') }}
@@ -48,18 +48,27 @@ export default {
   props: {
     word: Object,
     tagData: Object,
+    // Whether or not there is an active list
     hasActiveList: {
       type: Boolean,
       default: false
     },
+    // If set to true then the add to active list button is disabled
+    alreadyInActiveList: {
+      type: Boolean,
+      default: false
+    },
+    // If false does not show any list actions
     showListActions: {
       type: Boolean,
       default: false
     },
+    // If false does not show word list addition action (both active and selection add)
     showListAdd: {
       type: Boolean,
       default: true
     },
+    // If false does not show list word deletion action
     showListDelete: {
       type: Boolean,
       default: false
@@ -73,6 +82,11 @@ export default {
       if (kanji)
         tags = this.word.kanjiTags[kanji].concat(tags);
       return tags;
+    },
+    addToActive() {
+      if (this.alreadyInActiveList)
+        return;
+      this.$emit('add-to-active', this.word.id);
     },
     searchOnGoo() {
       // First kanji or kana
@@ -119,6 +133,14 @@ export default {
 
 .action:hover {
   cursor: pointer;
+}
+
+.action.disabled {
+  color: gray;
+}
+
+.action.disabled:hover {
+  cursor: default;
 }
 
 @media screen and (max-width: 1100px) {

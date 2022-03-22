@@ -14,6 +14,21 @@ export interface AuthorizedRequest extends Request {
     user?: IUser
 };
 
+// Tries to set user ID but doesn't error if not
+export function optionalAuthorized(req: AuthorizedRequest, res: Response, next: NextFunction): void {
+    if (!req.headers.authorization)
+        return next();
+
+    try {
+        // Verify token (format: Bearer token)
+        const payload = jwt.verify(req.headers.authorization.slice(7), config.tokenSecret) as JwtPayload;
+        // Add userId request object and continue
+        req.userId = payload.id;
+    } finally {
+        next();
+    }
+};
+
 // Verifies that user has a valid token and adds the userId property to the request object
 export function isAuthorized(req: AuthorizedRequest, res: Response, next: NextFunction, failCode: number=401): any {
     if (!req.headers.authorization)

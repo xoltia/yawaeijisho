@@ -1,6 +1,12 @@
 <template>
   <Navbar :showHomeLink="false"/>
-  <ListSelector :show="showListSelector" @selected="addWordToList" @close="showListSelector = false"/>
+  <ListSelector
+    v-if="authStore.isAuthenticated"
+    :show="showListSelector"
+    :disabledLists="pendingWordExistingLists"
+    @selected="addWordToList"
+    @close="showListSelector = false"
+  />
   <div class="narrow">
     <h1 :class="[$i18n.locale !== 'ja' ? 'title with-sub' : 'title']">
       <text class="highlight">Ya</text>和英辞書
@@ -27,6 +33,7 @@
       :showListAdd="true"
       :showListDelete="false"
       :hasActiveList="listStore.activeList !== null"
+      :alreadyInActiveList="authStore.isAuthenticated ? checkIfInActiveList(word) : false"
       @add-to-list="beginAddWordToList"
       @add-to-active="addWordToActiveList"
     />
@@ -79,7 +86,7 @@ export default {
       sentenceWords: [],
       errorName: '',
       showListSelector: false,
-      // Word currently waiting to be added to a list
+      // Word (ID) currently waiting to be added to a list
       wordToAdd: null
     }
   },
@@ -110,20 +117,26 @@ export default {
     totalPages() {
       return Math.ceil(this.totalWordCount / this.pageSize);
     },
+    // Lists which the pending word is already in
+    pendingWordExistingLists() {
+      if (!this.wordToAdd)
+        return [];
+      return this.words.find(word => word.id === this.wordToAdd).lists;
+    }
   },
   methods: {
     async getWordsCount(word) {
-      const response = await fetch(`/api/count/${word}`);
-      return response.json();
+      const response = await this.$http.get(`/api/count/${word}`);
+      return response.data;
     },
     async getWords(word) {
       // The API considers page 0 to be the first page
-      const response = await fetch(`/api/define/${word}?page=${this.page - 1}&size=${this.pageSize}`);
-      return response.json();
+      const response = await this.$http.get(`/api/define/${word}?page=${this.page - 1}&size=${this.pageSize}`);
+      return response.data;
     },
     async wakachi(sentence) {
-      const response = await fetch(`/api/wakachi/${sentence}`);
-      return response.json();
+      const response = await this.$http.get(`/api/wakachi/${sentence}`);
+      return response.data;
     },
     error(errorName) {
       // Reset state
@@ -201,12 +214,26 @@ export default {
       this.showListSelector = true;
     },
     async addWordToList(list) {
+      // Add word to list using store
       await this.listStore.addWordToList(list, this.wordToAdd);
+
+      // Make sure that the client knows the word is in the list
+      const wordAdded = this.words.find(w => w.id === this.wordToAdd);
+      wordAdded.lists.push(list);
+
+      // Reset list selection state
       this.wordToAdd = null;
       this.showListSelector = false;
     },
     async addWordToActiveList(word) {
       await this.listStore.addWordToActiveList(word);
+
+      // Make sure that the client knows the word is in the list
+      const wordAdded = this.words.find(w => w.id === word);
+      wordAdded.lists.push(this.listStore.activeList);
+    },
+    checkIfInActiveList(word) {
+      return word.lists.includes(this.listStore.activeList);
     }
   }
 }

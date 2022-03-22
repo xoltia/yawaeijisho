@@ -47,7 +47,9 @@
         "delete-from-list": "Delete from list",
         "search-goo": "Search on goo dictionary",
         "hide-details": "Hide details",
-        "show-details": "Show details"
+        "show-details": "Show details",
+        "already-in-active": "Already in active list",
+        "already-in-list": "Already added"
     },
     "ja": {
         "home-link": "検索ページ",
@@ -88,14 +90,16 @@
         "cancel": "キャンセル",
         "delete": "削除",
         "deletion-confirmation": "本当に削除しますか？削除されたリストは復元できません。",
-        "make-active": "活動中リストにする",
+        "make-active": "デフォルトリストにする",
         "select": "選択",
-        "select-and-make-active": "活動中リストにして選択し",
-        "add-to-active": "活動中リストに追加",
+        "select-and-make-active": "デフォルトリストにして選択し",
+        "add-to-active": "デフォルトリストに追加",
         "add-to-list": "リストに追加",
         "delete-from-list": "リストから削除",
         "search-goo": "Goo辞書で検索",
         "hide-details": "詳細を隠す",
-        "show-details": "詳細を表示"
+        "show-details": "詳細を表示",
+        "already-in-active": "デフォルトリストに追加済み",
+        "already-in-list": "追加済み"
     }
 }

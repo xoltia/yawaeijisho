@@ -8,8 +8,8 @@
     :class="['input', errors.length > 0 ? 'error' : '']"
     :disabled="disabled"
     v-model="inputValue">
-    <option v-for="[key, value] in Object.entries(options)" :value="key" :key="key">
-      {{ value }}
+    <option v-for="{text, value, disabled} in options" :value="value" :key="value" :disabled="disabled">
+      {{ text }}
     </option>
   </select>
   <input v-else
@@ -43,7 +43,7 @@ export default {
       type: Array,
       default: () => []
     },
-    options: Object
+    options: [Object]
   },
   computed: {
     inputValue: {

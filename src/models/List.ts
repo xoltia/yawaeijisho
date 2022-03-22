@@ -1,6 +1,6 @@
-import { Types, Schema, model } from 'mongoose';
+import { Types, Schema, Document, model } from 'mongoose';
 
-export interface IList {
+export interface IList extends Document {
     creator: Types.ObjectId,
     slug: string,
     title: string,
