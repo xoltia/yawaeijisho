@@ -28,7 +28,7 @@ interface Config {
 };
 
 const config: Config = {
-    publicFolder: process.env.PUBLIC_FOLDER || path.join(__dirname, '../client/dist'),
+    publicFolder: process.env.PUBLIC_FOLDER || path.join(__dirname, '../../client/dist'),
     jmdictLocation: process.env.JMDICT_LOCATION,
     useIndexFile: process.env.USE_INDEX_FILE === 'true',
     isProduction: process.env.NODE_ENV === 'production',
