@@ -24,12 +24,14 @@ interface Config {
     db: DbConfig,
     cacheMax: number,
     cacheMaxAge: number,
-    useShiftJISMecab: boolean,
+    mecabLocation: string,
+    useShiftJISMecab: boolean
 };
 
 const config: Config = {
     publicFolder: process.env.PUBLIC_FOLDER || path.join(__dirname, '../../client/dist'),
     jmdictLocation: process.env.JMDICT_LOCATION,
+    mecabLocation: process.env.MECAB_LOCATION || 'mecab',
     useIndexFile: process.env.USE_INDEX_FILE === 'true',
     isProduction: process.env.NODE_ENV === 'production',
     maxPageSize: process.env.MAX_PAGE_SIZE ? Number(process.env.MAX_PAGE_SIZE) : 25,

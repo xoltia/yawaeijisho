@@ -1,0 +1,37 @@
+# This image contains the dependencies needed to run the app image.
+# It downloads the JMDict data file to /home/jmdict/jmdict-eng-3.1.0.json
+# and installs mecab to /home/linuxbrew/.linuxbrew/bin/mecab
+
+FROM node:16
+
+# Download JMDict JSON data
+WORKDIR /home/jmdict
+ADD https://github.com/scriptin/jmdict-simplified/releases/download/3.1.0%2B20201001122454/jmdict-eng-3.1.0+20201001122454.json.tgz /home/jmdict
+RUN tar zxvf /home/jmdict/jmdict-eng-3.1.0+20201001122454.json.tgz -C /home/jmdict/
+
+WORKDIR /
+
+# Install homebrew for installing mecab
+RUN apt-get update && \
+    apt-get install -y -q --allow-unauthenticated \
+    git \
+    sudo
+RUN useradd -m -s /bin/zsh linuxbrew && \
+    usermod -aG sudo linuxbrew &&  \
+    mkdir -p /home/linuxbrew/.linuxbrew && \
+    chown -R linuxbrew: /home/linuxbrew/.linuxbrew
+USER linuxbrew
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# Install mecab
+RUN /home/linuxbrew/.linuxbrew/bin/brew install mecab
+RUN /home/linuxbrew/.linuxbrew/bin/brew install mecab-ipadic
+
+# Reset user
+USER root
+RUN userdel linuxbrew
+
+# Set environment variables
+ENV JMDICT_LOCATION=/home/jmdict/jmdict-eng-3.1.0.json
+ENV MECAB_LOCATION=/home/linuxbrew/.linuxbrew/bin/mecab
+ENV MECAB_SHIFT_JIS=false

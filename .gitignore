@@ -3,6 +3,7 @@ node_modules
 dist
 
 # local env files
+docker.env
 .env.local
 .env.*.local
 .env

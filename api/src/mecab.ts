@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import * as IconvCP932 from 'iconv-cp932';
 import config from './config';
 
-type MecabOutput = Array<[String, {
+type MecabOutput = Array<[string, {
     品詞: string,
     品詞細分類1: string,
     品詞細分類2: string,
@@ -30,7 +30,7 @@ function format(output: string): MecabOutput {
  * Passes a phrase string as input to mecab and returns the output as an object
  */
 export function parse(phrase: string, callback: (output: MecabOutput) => void): void {
-    const mecab = spawn('mecab');
+    const mecab = spawn(config.mecabLocation);
     mecab.stdin.write(config.useShiftJISMecab ? IconvCP932.encode(phrase) : phrase);
     mecab.stdin.end();
 
