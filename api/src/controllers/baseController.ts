@@ -18,7 +18,72 @@ const cache = new LRU<string, DefaultWordType[]>({
 // Words which are present in a users lists
 interface ListWord extends DefaultWordType {
     lists: Types.ObjectId[]
-}
+};
+
+export const getTags = (_: Request, res: Response) => {
+    res.json(JMDict.tags);
+};
+
+export const getDefinitions = asyncHandler(async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(400).json({ errors: errors.array() });
+        return;
+    }
+
+    let entries = getEntries(req.params.word);
+    const page = Number(req.query.page);
+    const size = Number(req.query.size);
+    const rangeStart = page * size;
+    const rangeEnd = (rangeStart < 0 ? entries.length + rangeStart : rangeStart) + size;
+    entries = entries.slice(rangeStart, rangeEnd);
+    if (req.userId)
+        entries = await attachLists(req.userId, entries);
+
+    res.json(entries);
+});
+
+export const getWordCount = (req: Request, res: Response) => {
+    res.json(getEntries(req.params.word).length);
+};
+
+export const getWordById = asyncHandler(async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    // 404 if no word with ID exists
+    let word = JMDict.getWord(req.params.id);
+    if (!word) {
+        res.sendStatus(404);
+        return;
+    }
+    if (req.userId)
+        word = (await attachLists(req.userId, [word]))[0];
+    res.json(word);
+});
+
+export const getWordsByIds = asyncHandler(async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const ids = req.query.id as string[];
+    // Don't send more words than would be allowed with a normal search
+    ids.length = Math.min(ids.length, config.maxPageSize);
+
+    // At this point API will have errors if any of the IDs were invalid
+    // so mapping should work without checking for invalid IDs
+    let words = ids.map(id => JMDict.getWord(id));
+    if (req.userId)
+        words = await attachLists(req.userId, words);
+    res.json(words);
+});
+
+export const wakachi = (req: Request, res: Response) => {
+    parse(req.params.phrase, (result) => {
+        const response = result.map(data => [
+            data[0],
+            data[1]['品詞'] == '記号' ? null : data[1]['原形']
+        ]);
+        res.json(response);
+    });
+};
+
+/* --- HELPER FUNCTIONS --- */
 
 function getEntries(word: string): DefaultWordType[] {
     if (cache.has(word))
@@ -68,67 +133,3 @@ async function attachLists(userId: string | Types.ObjectId, words: DefaultWordTy
 
     return wordsWithLists;
 }
-
-
-export const tags = (_: Request, res: Response) => {
-    res.json(JMDict.tags);
-};
-
-export const define = asyncHandler(async (req: AuthorizedRequest, res: Response): Promise<void> => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
-        return;
-    }
-
-    let entries = getEntries(req.params.word);
-    const page = Number(req.query.page);
-    const size = Number(req.query.size);
-    const rangeStart = page * size;
-    const rangeEnd = (rangeStart < 0 ? entries.length + rangeStart : rangeStart) + size;
-    entries = entries.slice(rangeStart, rangeEnd);
-    if (req.userId)
-        entries = await attachLists(req.userId, entries);
-
-    res.json(entries);
-});
-
-export const count = (req: Request, res: Response) => {
-    res.json(getEntries(req.params.word).length);
-};
-
-export const getById = asyncHandler(async (req: AuthorizedRequest, res: Response): Promise<void> => {
-    // 404 if no word with ID exists
-    let word = JMDict.getWord(req.params.id);
-    if (!word) {
-        res.sendStatus(404);
-        return;
-    }
-    if (req.userId)
-        word = (await attachLists(req.userId, [word]))[0];
-    res.json(word);
-});
-
-export const getMultipleByIds = asyncHandler(async (req: AuthorizedRequest, res: Response): Promise<void> => {
-    const ids = req.query.id as string[];
-    // Don't send more words than would be allowed with a normal search
-    ids.length = Math.min(ids.length, config.maxPageSize);
-
-    // At this point API will have errors if any of the IDs were invalid
-    // so mapping should work without checking for invalid IDs
-    let words = ids.map(id => JMDict.getWord(id));
-    if (req.userId)
-        words = await attachLists(req.userId, words);
-    res.json(words);
-});
-
-export const wakachi = (req: Request, res: Response) => {
-    parse(req.params.phrase, (result) => {
-        const response = result.map(data => [
-            data[0],
-            data[1]['品詞'] == '記号' ? null : data[1]['原形']
-        ]);
-        res.json(response);
-    });
-};

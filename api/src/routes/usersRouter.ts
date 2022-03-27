@@ -7,8 +7,8 @@ const router = Router();
 router.get('/me', [
     isAuthorized,
     isUser
-], usersController.me);
+], usersController.getCurrentUser);
 
-router.get('/exists/:username', usersController.exists);
+router.get('/exists/:username', usersController.userExists);
 
 export default router;

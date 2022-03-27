@@ -14,9 +14,9 @@ router.get('/', oneOf([
         query('username').exists().isString(),
         query('title').exists().isString()
     ],
-]), collectErrors, listsController.getList);
+]), collectErrors, listsController.getListByQuery);
 router.delete('/:id', isAuthorized, listsController.deleteList);
-router.get('/mylists', isAuthorized, listsController.getMyLists);
+router.get('/mylists', isAuthorized, listsController.getCurrentUserLists);
 router.get('/:id/words', listsController.getListWords);
 router.put('/:id/words', [
     isAuthorized,
@@ -59,6 +59,6 @@ router.post('/', [
         .default(true)
         .isBoolean(),
     collectErrors
-], listsController.postList);
+], listsController.createList);
 
 export default router;

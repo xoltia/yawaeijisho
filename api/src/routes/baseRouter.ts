@@ -19,14 +19,14 @@ router.get('/words', [
         .withMessage('Query must be a list of comma seperated JMDict IDs.'),
     collectErrors,
     optionalAuthorized
-], baseController.getMultipleByIds)
-router.get('/words/:id', optionalAuthorized, baseController.getById)
-router.get('/tags', baseController.tags);
-router.get('/count/:word', baseController.count);
+], baseController.getWordsByIds)
+router.get('/words/:id', optionalAuthorized, baseController.getDefinitions)
+router.get('/tags', baseController.getTags);
+router.get('/count/:word', baseController.getWordCount);
 router.get('/define/:word', optionalAuthorized, [
     query('page').isInt().default(0),
     query('size').isInt({ min: 1 }).default(config.maxPageSize)
-], baseController.define);
+], baseController.getDefinitions);
 router.get('/wakachi/:phrase', baseController.wakachi);
 
 export default router;

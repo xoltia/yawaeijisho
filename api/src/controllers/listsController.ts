@@ -4,13 +4,13 @@ import User from '../models/User';
 import { isAuthorized, AuthorizedRequest } from '../middleware/authorization';
 import { createError } from '../middleware/errors';
 
-export const getMyLists = asyncHandler(async (req: AuthorizedRequest, res) => {
+export const getCurrentUserLists = asyncHandler(async (req: AuthorizedRequest, res) => {
     const creator = req.userId;
     const lists = await List.find({ creator });
     res.json(lists);
 });
 
-export const getList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
+export const getListByQuery = asyncHandler(async (req: AuthorizedRequest, res): Promise<void> => {
     const { username, title, id } = req.query;
     let list: IList;
 
@@ -18,35 +18,46 @@ export const getList = asyncHandler(async (req: AuthorizedRequest, res): Promise
         list = await List.findById(id);
     } else {
         const creator = await User.findOne({ username }).select('_id');
-        if (!creator)
-            return res.sendStatus(404);
+        if (!creator) {
+            res.sendStatus(404);
+            return;
+        }
+            
         list = await List.findOne({ title, creator: creator.id });
     }
 
-    if (!list)
-        return res.sendStatus(404);
-    else if (list.public)
-        return res.json(list);
+    if (!list) {
+        res.sendStatus(404);
+        return;
+    }
+    else if (list.public) {
+        res.json(list);
+        return;
+    }
 
     isAuthorized(req, res, () => {
-        if (req.userId === list.creator.toString()) {
+        if (req.userId === list.creator.toString())
             res.json(list);
-        } else {
+        else
             res.sendStatus(404);
-        }
     }, 404);
 });
 
-export const addWordsToList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
+export const addWordsToList = asyncHandler(async (req: AuthorizedRequest, res): Promise<void> => {
     const list = await List.findById(req.params.id).select('words creator');
 
     // No list found
-    if (!list)
-        return res.sendStatus(404);
+    if (!list) {
+        res.sendStatus(404);
+        return;
+    }
+
     // If list is found make sure this user is the creator
     // Pretend list doesn't exist if list isn't public and not authorized to change list
-    else if (list.creator.toString() !== req.userId)
-        return res.sendStatus(list.public ? 401 : 404);
+    else if (list.creator.toString() !== req.userId) {
+        res.sendStatus(list.public ? 401 : 404);
+        return;
+    }
 
     await List.updateOne({ _id: list._id }, {
         $addToSet: {
@@ -59,16 +70,21 @@ export const addWordsToList = asyncHandler(async (req: AuthorizedRequest, res): 
     res.sendStatus(200);
 });
 
-export const deleteWordsFromList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
+export const deleteWordsFromList = asyncHandler(async (req: AuthorizedRequest, res): Promise<void> => {
     const list = await List.findById(req.params.id).select('words creator');
 
     // No list found
-    if (!list)
-        return res.sendStatus(404);
+    if (!list) {
+        res.sendStatus(404);
+        return;
+    }
+        
     // If list is found make sure this user is the creator
     // Pretend list doesn't exist if list isn't public and not authorized to change list
-    else if (list.creator.toString() !== req.userId)
-        return res.sendStatus(list.public ? 401 : 404);
+    else if (list.creator.toString() !== req.userId) {
+        res.sendStatus(list.public ? 401 : 404);
+        return;
+    }
 
     await List.updateOne({ _id: list._id }, {
         $pull: {
@@ -81,13 +97,17 @@ export const deleteWordsFromList = asyncHandler(async (req: AuthorizedRequest, r
     res.sendStatus(200);
 });
 
-export const getListWords = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
+export const getListWords = asyncHandler(async (req: AuthorizedRequest, res): Promise<void> => {
     const list = await List.findById(req.params.id).select('words public creator');
     
-    if (!list)
-        return res.sendStatus(404);
-    else if (list.public)
-        return res.json(list.words);
+    if (!list) {
+        res.sendStatus(404);
+        return;
+    }
+    else if (list.public) {
+        res.json(list.words);
+        return;
+    }
 
     isAuthorized(req, res, () => {
         // Send list only if request made by creator
@@ -99,7 +119,7 @@ export const getListWords = asyncHandler(async (req: AuthorizedRequest, res): Pr
     }, 404);
 });
 
-export const postList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
+export const createList = asyncHandler(async (req: AuthorizedRequest, res): Promise<void> => {
     const {
         title,
         description,
@@ -118,19 +138,23 @@ export const postList = asyncHandler(async (req: AuthorizedRequest, res): Promis
     try {
         await list.save();
     } catch (err) {
-        if (err.code === 11000 && err.keyPattern.creator && err.keyPattern.slug)
-            return res.status(400).json(createError(req, 'LISTS_SLUG_NOT_UNIQUE'));
+        if (err.code === 11000 && err.keyPattern.creator && err.keyPattern.slug) {
+            res.status(400).json(createError(req, 'LISTS_SLUG_NOT_UNIQUE'));
+            return;
+        }
     }
 
     res.json(list);
 });
 
-export const deleteList = asyncHandler(async (req: AuthorizedRequest, res): Promise<any> => {
+export const deleteList = asyncHandler(async (req: AuthorizedRequest, res): Promise<void> => {
     const list = await List.findById(req.params.id).select('words public creator');
     
     // Return 404 if trying to delete nonexistant list
-    if (!list)
-        return res.sendStatus(404);
+    if (!list) {
+        res.sendStatus(404);
+        return;
+    }
 
     // Delete only if creator of list
     if (req.userId === list.creator.toString())
