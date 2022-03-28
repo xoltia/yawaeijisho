@@ -1,5 +1,6 @@
 <template>
   <Modal :show="show" style="text-align: center;" :showX="true" @close="$emit('close')">
+    <h4>{{ $t('select-a-list') }}</h4>
     <Input
       inputType="select"
       :options="listOptions"

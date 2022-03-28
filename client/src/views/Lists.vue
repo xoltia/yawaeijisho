@@ -149,7 +149,6 @@ export default {
       }
     },
     startDelete(id) {
-      //await this.listStore.deleteList(id);
       this.pendingDeletion = id;
       this.showDeleteModal = true;
     },

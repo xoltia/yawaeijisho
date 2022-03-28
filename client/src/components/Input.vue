@@ -65,13 +65,14 @@ export default {
   padding: 5px;
   margin-bottom: 5px;
   border: 1px solid lightgray;
-  width: 300px;
+  min-width: 300px;
+  width: 100%;
   display: block;
 }
 
 @media screen and (max-width: 500px) {
   .input {
-    width: 250px;
+    min-width: 250px;
   }
 
   textarea.input {
@@ -81,7 +82,7 @@ export default {
 
 @media screen and (max-width: 300px) {
   .input {
-    width: 200px;
+    min-width: 200px;
   }
 
   textarea.input {
@@ -95,6 +96,7 @@ textarea.input {
 
 .input[type='checkbox'] {
   width: auto;
+  min-width: auto;
   display: inline-block;
   margin: 20px 20px 0 10px;
 }

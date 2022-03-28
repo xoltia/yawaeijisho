@@ -49,7 +49,8 @@
         "hide-details": "Hide details",
         "show-details": "Show details",
         "already-in-active": "Already in active list",
-        "already-in-list": "Already added"
+        "already-in-list": "Already added",
+        "select-a-list": "Which list would you like to add this word to?"
     },
     "ja": {
         "home-link": "検索ページ",
@@ -100,6 +101,7 @@
         "hide-details": "詳細を隠す",
         "show-details": "詳細を表示",
         "already-in-active": "デフォルトリストに追加済み",
-        "already-in-list": "追加済み"
+        "already-in-list": "追加済み",
+        "select-a-list": "選択した言葉を追加したいリストを選んでください"
     }
 }
