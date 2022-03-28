@@ -158,7 +158,7 @@ export const deleteList = asyncHandler(async (req: AuthorizedRequest, res): Prom
 
     // Delete only if creator of list
     if (req.userId === list.creator.toString())
-        List.deleteOne({ _uid: req.params.id }).then(() => res.sendStatus(200));
+        List.deleteOne({ _id: req.params.id }).then(() => res.sendStatus(200));
     else
         res.sendStatus(401);
 });
