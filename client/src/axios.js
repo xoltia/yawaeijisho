@@ -9,8 +9,9 @@ const instance = axios.create({
 
 instance.interceptors.request.use(function(config) {
   const authStore = useAuthStore();
+  config.headers['Accept-Language'] = localStorage.getItem('preferences.lang') || navigator.language.split('-')[0];
   if (authStore.isAuthenticated)
-    config.headers.Authorization = `Bearer ${authStore.token}`;
+    config.headers['Authorization'] = `Bearer ${authStore.token}`;
   return config;
 });
 
