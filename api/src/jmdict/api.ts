@@ -152,6 +152,10 @@ export default class JMDictAPI<WordType, IndexNames extends string> {
         return this._processedWords[this._wordIds.get(wordId)];
     }
 
+    getUnprocessedWord(wordId: string) {
+        return this._jmdict.words[this._wordIds.get(wordId)];
+    }
+
     get tags(): Record<string, string> {
         return this._jmdict.tags;
     }

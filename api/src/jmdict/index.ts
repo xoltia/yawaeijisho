@@ -19,12 +19,11 @@ function kanjiBuilder(word: JMDictWord, index: IndexNumber): Index {
 const JMDict = new JMDictAPI<DefaultWordType, 'kanji' | 'kana'>();
     
 export default JMDict;
-export function setup() {
-    return JMDict
-        .withMapper(baseWordMapper)
-        .useIndexFiles()
-        .loadFile(config.jmdictLocation)
-        .then(j => j.buildWordList())
-        .then(j => j.createIndex('kana', kanaBuilder, kanaStringCompare, kanaStringStartsWith))
-        .then(j => j.createIndex('kanji', kanjiBuilder, kanjiStringCompare, kanjiStringStartsWith));
-}
+
+export const setup = () => JMDict
+    .withMapper(baseWordMapper)
+    .useIndexFiles()
+    .loadFile(config.jmdictLocation)
+    .then(j => j.buildWordList())
+    .then(j => j.createIndex('kana', kanaBuilder, kanaStringCompare, kanaStringStartsWith))
+    .then(j => j.createIndex('kanji', kanjiBuilder, kanjiStringCompare, kanjiStringStartsWith));
