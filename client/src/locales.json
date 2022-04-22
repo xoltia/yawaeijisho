@@ -61,7 +61,11 @@
         "save": "Save",
         "create": "Create",
         "edit-name": "Edit Name",
-        "add-to-anki": "Add to Anki"
+        "add-to-anki": "Add to Anki",
+        "anki-invalid-note-err": "The note returned by the selected function does not match your selected Anki model.",
+        "anki-note-created": "Note added to Anki.",
+        "anki-add-error": "An error occurred while adding the note to Anki.",
+        "func-error": "An error occurred while executing the word function."
     },
     "ja": {
         "home-link": "検索ページ",
@@ -124,6 +128,10 @@
         "save": "保存",
         "create": "作成",
         "edit-name": "名前を編集",
-        "add-anki-note": "Ankiノートを追加"
+        "add-anki-note": "Ankiノートを追加",
+        "anki-invalid-note-err": "選択した関数が返したノートは選択したAnkiモデルと一致しません。",
+        "anki-note-created": "ノートをAnkiに追加しました。",
+        "anki-add-error": "ノートの追加中にエラーが発生しました。",
+        "func-error": "言葉関数の実行中にエラーが発生しました。"
     }
 }

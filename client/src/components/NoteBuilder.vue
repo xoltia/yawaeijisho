@@ -115,7 +115,7 @@ export default {
       } else if (message.event === 'Result') {
         this.handleFuncResult(message.result);
       } else if (message.error) {
-        alert(message.message || message.error);
+        alert(this.$t('func-error') + '\n' + (message.message || message.error));
         console.error(message.error);
         this.$emit('finished');
       }
