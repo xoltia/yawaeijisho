@@ -3,10 +3,12 @@
   <textarea v-if="inputType === 'paragraph'" rows="4"
     :class="['input', errors.length > 0 ? 'error' : '']"
     :disabled="disabled"
+    :style="style"
     v-model="inputValue"/>
   <select v-else-if="inputType === 'select'"
     :class="['input', errors.length > 0 ? 'error' : '']"
     :disabled="disabled"
+    :style="style"
     v-model="inputValue">
     <option v-for="{text, value, disabled} in options" :value="value" :key="value" :disabled="disabled">
       {{ text }}
@@ -16,6 +18,7 @@
     :class="['input', errors.length > 0 ? 'error' : '']"
     :type="inputType"
     :disabled="disabled"
+    :style="style"
     v-model="inputValue"/>
   <div class="error-msg" v-for="err in errors" :key="err.name">
     {{ err.message || err.name }}
@@ -43,7 +46,11 @@ export default {
       type: Array,
       default: () => []
     },
-    options: [Object]
+    options: [Object],
+    style: {
+      type: Object,
+      default: () => ({})
+    }
   },
   computed: {
     inputValue: {
@@ -60,6 +67,12 @@ export default {
 </script>
 
 <style scoped>
+input, select {
+  -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 .input {
   font-size: 15px;
   padding: 5px;

@@ -1,6 +1,6 @@
 <template>
     <div class="modal-bg" v-if="show" :style="{ top: scrollHeight }">
-      <div class="modal">
+      <div class="modal" :style="style">
         <div class="header" v-if="showX">
           <font-awesome-icon icon="x" @click="$emit('close')" class="close-btn"></font-awesome-icon>
         </div>
@@ -27,21 +27,28 @@ export default {
     showX: {
       type: Boolean,
       default: false
+    },
+    style: {
+      type: Object,
+      default: () => ({})
     }
   },
   emits: ['close'],
   watch: {
-    show(isShowing) {
-      // Show scrolling again if modal isn't visible
-      if (!isShowing) {
-        document.documentElement.style.overflow = 'auto';
-        return;
-      }
+    show: {
+      immediate: true,
+      handler(isShowing) {
+        // Show scrolling again if modal isn't visible
+        if (!isShowing) {
+          document.documentElement.style.overflow = 'auto';
+          return;
+        }
 
-      // Compute new scroll height to move modal to everytime it is going to be shown
-      this.scrollHeight = (document.documentElement.scrollTop || document.body.scrollTop) + 'px';
-      // No scrolling off of modal
-      document.documentElement.style.overflow = 'hidden';
+        // Compute new scroll height to move modal to everytime it is going to be shown
+        this.scrollHeight = (document.documentElement.scrollTop || document.body.scrollTop) + 'px';
+        // No scrolling off of modal
+        document.documentElement.style.overflow = 'hidden';
+      }
     }
   }
 }

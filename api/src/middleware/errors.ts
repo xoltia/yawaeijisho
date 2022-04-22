@@ -17,7 +17,9 @@ type ErrorName =
     'AUTH_PASSWORD_NON_STRING' | 'AUTH_PASSWORD_WEAK' | 'AUTH_$_INCORRECT_CREDENTIALS' |
 
     'LISTS_TITLE_SHORT' | 'LISTS_TITLE_LONG' | 'LISTS_SLUG_SHORT' | 'LISTS_SLUG_LONG' |
-    'LISTS_SLUG_NOT_UNIQUE' | 'LISTS_DESCRIPTION_LONG';
+    'LISTS_SLUG_NOT_UNIQUE' | 'LISTS_DESCRIPTION_LONG' |
+    
+    'FUNCS_SCRIPT_TOO_LONG' | 'FUNCS_NAME_TOO_LONG' | 'FUNCS_NAME_TOO_SHORT';
 
 type Locale = 'ja' | 'en';
 type ErrorSource = Record<ErrorName, string>;
@@ -45,6 +47,9 @@ const en: ErrorSource = {
     'LISTS_SLUG_LONG': 'Slug is too long.',
     'LISTS_SLUG_NOT_UNIQUE': 'Slugs must be unique.',
     'LISTS_DESCRIPTION_LONG': 'Description is too long.',
+    'FUNCS_SCRIPT_TOO_LONG': 'Script content is too long.',
+    'FUNCS_NAME_TOO_LONG': 'Script name is too long.',
+    'FUNCS_NAME_TOO_SHORT': 'Script name is too short.',
 };
 
 const ja: ErrorSource = {
@@ -64,6 +69,9 @@ const ja: ErrorSource = {
     'LISTS_SLUG_LONG': 'スラッグが長すぎます。',
     'LISTS_SLUG_NOT_UNIQUE': 'ご利用のアカウントでそのスラッグが既に使われています。',
     'LISTS_DESCRIPTION_LONG': '説明が長い過ぎます。',
+    'FUNCS_SCRIPT_TOO_LONG': 'スクリプト内容が長い過ぎます。',
+    'FUNCS_NAME_TOO_LONG': 'スクリト名が長い過ぎます。',
+    'FUNCS_NAME_TOO_SHORT': 'スクリト名が短すぎます。',
 };
 
 const sources: ErrorSources = { ja, en };

@@ -7,8 +7,11 @@ import {
     baseRouter,
     authRouter,
     usersRouter,
-    listsRouter
+    listsRouter,
+    funcRouter
 } from './routes';
+import { setupWsProxy } from './controllers/syncController.ws';
+import assert = require('assert');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +21,7 @@ app.use('/api', baseRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/lists', listsRouter);
+app.use('/api/funcs', funcRouter);
 
 // If environment set to production serve built client files
 if (config.isProduction) {
@@ -37,7 +41,28 @@ setupJMDict()
             }
         
             console.log(`Conencted to Mongo DB server at ${config.db.connectionString}`);
+            console.log(`Using funcbox at ${config.funcboxUri}`);
 
-            server.listen(config.port, () => console.log(`Server listening on port ${config.port}`));
+            const funcboxUri = config.funcboxUri;
+            const verificationUrl = `http://${funcboxUri.host}/check_alive`;
+
+            console.log(`Verifying funcbox instance is running. (${verificationUrl})`);
+
+            const req = http.get(verificationUrl, (res) => {
+                // Currently no reason this should happen but may in the future
+                assert(res.statusCode === 200, 'Status code returned from funcbox check_alive was not HTTP OK');
+                setupWsProxy(server, funcboxUri.toString());
+                server.listen(config.port, () => {
+                    // Because I get bored watching the console waiting for everything to be ready
+                    if (config.readyBeep)
+                        process.stdout.write('\x07');
+                    console.log(`Server listening on port ${config.port}`);
+                });
+            });
+
+            req.on('error', () => {
+                console.log('Failed to verify funcbox is running. Please make sure that a funcbox instance is running at the provided host:', funcboxUri.host);
+                process.exit(1);
+            });
         });
     });

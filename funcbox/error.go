@@ -2,12 +2,15 @@ package main
 
 type ErrorCode uint8
 
+// Note: this should only be half of error code type.
+// Range 128-255 should be reserved for API errors.
 const (
 	FailedToExecute ErrorCode = iota
 	NoOutputVar
 	FailedToMarshallOutputVar
 	ScriptTimeout
 	UnexpectedMessageType
+	InputTimeout
 )
 
 var ErrorNames = [...]string{
@@ -16,6 +19,7 @@ var ErrorNames = [...]string{
 	"FailedToMarshallOutputVar",
 	"ScriptTimeout",
 	"UnexpectedMessageType",
+	"InputTimeout",
 }
 
 type ErrorMessage struct {

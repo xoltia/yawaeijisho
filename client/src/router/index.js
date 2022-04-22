@@ -28,6 +28,16 @@ const routes = [
       if (authStore.isAuthenticated) next();
       else next('/signin');
     }
+  },
+  {
+    path: '/anki-settings',
+    name: 'AnkiSettings',
+    component: () => import('../views/AnkiSettings.vue'),
+    beforeEnter: (to, from, next) => {
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated) next();
+      else next('/signin');
+    }
   }
 ];
 

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -91,8 +90,6 @@ func createInputFunction(promptChan chan<- PromptMessage, inputChan <-chan strin
 		// Wait for input
 		go func() {
 			input, ok := <-inputChan
-
-			fmt.Printf("RECEIVED INPUT (OK: %t): %s\n", ok, input)
 
 			if !ok {
 				// The WS connection probably disconnected
@@ -210,8 +207,6 @@ func executeCallMessageWithIsoAndChans(
 	globalArrays := make(map[string][]interface{})
 	globalObjects := make(map[string]map[string]interface{})
 
-	fmt.Printf("%#v\n", callMessage.Inputs)
-
 	for k, v := range callMessage.Inputs {
 		// If it is an array then it cannot be set as part of the template
 		// It will be set after the context is created
@@ -253,8 +248,6 @@ func executeCallMessageWithIsoAndChans(
 	// Run script
 	_, err := ctx.RunScript(callMessage.Script, "func.js")
 
-	close(promptChan)
-
 	// Send unsuccessful result if error occurred
 	// It is possible that finish was called first,
 	// in which case it will error silently
@@ -272,6 +265,7 @@ func executeCallMessageWithIsoAndChans(
 	case <-time.After(timout):
 		resultChan <- RunResult{false, ScriptTimeout, nil}
 	}
+	close(promptChan)
 }
 
 func executeCallMessage(callMessage *CallMessage, timout time.Duration) (result ResultChan, prompt PromptChan, input InputChan) {

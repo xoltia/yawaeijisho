@@ -47,6 +47,12 @@ html, body {
   }
 }
 
+.slightly-narrow {
+  margin-top: 60px;
+  margin: auto;
+  max-width: 1300px;
+}
+
 /* TODO: Button component? */
 .btn {
   padding: 10px 20px;
@@ -74,6 +80,14 @@ html, body {
   cursor: pointer;
 }
 
+.btn.active {
+  background: #a352ff;
+}
+
+.btn.invert.active {
+  color: white;
+}
+
 .btn.invert:hover {
   color: white;
 }
@@ -92,5 +106,9 @@ html, body {
 a {
   color: #2c3e50;
   text-decoration: none;
+}
+
+a.btn {
+  display: inline-block;
 }
 </style>

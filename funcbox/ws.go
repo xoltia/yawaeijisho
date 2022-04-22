@@ -1,15 +1,41 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
+	"net"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-func processCallMessage(c *websocket.Conn) {
+type PromptEventMessage struct {
+	Event string `json:"event"`
+	PromptMessage
+}
+
+type ResultEventMessage struct {
+	Event  string      `json:"event"`
+	Result interface{} `json:"result"`
+}
+
+type ErrorEventMessage struct {
+	Event string `json:"event"`
+	ErrorMessage
+}
+
+func createResultEventMessage(jsonBytes []byte) ResultEventMessage {
+	var data interface{}
+	json.Unmarshal(jsonBytes, &data)
+	return ResultEventMessage{"Result", data}
+}
+
+func createPromptEventMessage(prompt *PromptMessage) PromptEventMessage {
+	return PromptEventMessage{"Prompt", *prompt}
+}
+
+func processCallMessage(c *websocket.Conn, execTimeout int64, inputTimeout int64) {
 	defer c.Close()
 
 	// First message should contain a CallMessage
@@ -24,22 +50,24 @@ func processCallMessage(c *websocket.Conn) {
 		return
 	}
 
-	fmt.Printf("READ MESSAGE, NO ERROR:\n%#v\n", initalMessage)
-
 	// Get channels for communicating with executor
-	resultChan, promptChan, inputChan := executeCallMessage(&initalMessage, 10*time.Second)
-
-	fmt.Println("CALLED EXECUTE")
+	resultChan, promptChan, inputChan := executeCallMessage(&initalMessage, time.Duration(execTimeout)*time.Second)
 
 	// Answer any prompts until executor closes the channel
 	for prompt := range promptChan {
 		// Send prompts down the socket
-		c.WriteJSON(prompt)
+		c.WriteJSON(createPromptEventMessage(&prompt))
 		// Read response to prompt, again checking for errors
+		c.SetReadDeadline(time.Now().Add(time.Duration(inputTimeout) * time.Second))
 		messageType, message, err := c.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("unexpected close error: %v", err)
+			}
+
+			e, ok := err.(net.Error)
+			if ok && e.Timeout() {
+				c.WriteJSON(createError(InputTimeout))
 			}
 
 			// IMPORTANT!
@@ -60,27 +88,27 @@ func processCallMessage(c *websocket.Conn) {
 
 	close(inputChan)
 
-	fmt.Println("PASSED PROMPT")
-
 	result := <-resultChan
-	fmt.Printf("%t\n", result.success)
+
 	if !result.success {
 		c.WriteJSON(createError(result.errorCode))
 	} else {
-		c.WriteMessage(websocket.TextMessage, result.jsonReturn)
+		c.WriteJSON(createResultEventMessage(result.jsonReturn))
 	}
 }
 
-func serveWs(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(_ *http.Request) bool { return true }
+func createServeFunction(execTimeout, inputTimeout int64) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		upgrader.CheckOrigin = func(_ *http.Request) bool { return true }
 
-	// Upgrade connection
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Print("upgrade error:", err)
-		return
+		// Upgrade connection
+		c, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Print("upgrade error:", err)
+			return
+		}
+
+		// Start listening to messages
+		go processCallMessage(c, execTimeout, inputTimeout)
 	}
-
-	// Start listening to messages
-	go processCallMessage(c)
 }

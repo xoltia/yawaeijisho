@@ -63,3 +63,15 @@ export const isUser = asyncHandler(async (req: AuthorizedRequest, res, next): Pr
     req.user = user;
     next();
 });
+
+
+// Checks a header and returns User ID if auth successful else null
+export function checkToken(token: string): string | null {
+    try {
+        // Verify token (format: Bearer token)
+        const payload = jwt.verify(token, config.tokenSecret) as JwtPayload;
+        return payload.id;
+    } catch (e) {
+        return null;
+    }
+}

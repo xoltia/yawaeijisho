@@ -1,5 +1,9 @@
 <template>
   <div class="navbar">
+    <span :class="['dot', ankiConnect.isOnline ? 'green' : 'red']" @click="$router.push({ name: 'AnkiSettings' })"></span>
+    <span :class="['dot-description', ankiConnect.isOnline ? 'green' : 'red']">
+      {{ ankiConnect.isOnline ? $t('anki-connected') : $t('anki-not-connected') }}
+    </span>
     <router-link v-if="showHomeLink" to="/" class="nav-link">{{ $t('home-link') }}</router-link>
     <router-link to="/about" class="nav-link">{{ $t('about-link') }}</router-link>
     <router-link v-if="showListsLink" to="/lists" class="nav-link">{{ $t('lists-link') }}</router-link>
@@ -53,6 +57,7 @@
 <script>
 import LocaleSwitcher from '../components/LocaleSwitcher.vue';
 import { useAuthStore } from '../store/useAuthStore';
+import { useAnkiStore } from '../store/useAnkiStore';
 
 export default {
   name: 'Navbar',
@@ -71,7 +76,11 @@ export default {
   },
   setup() {
     const auth = useAuthStore();
-    return { auth };
+    const ankiConnect = useAnkiStore();
+
+    ankiConnect.tryConnect();
+
+    return { auth, ankiConnect };
   },
   data() {
     return {
@@ -162,5 +171,43 @@ export default {
   .menu-btn {
     display: block;
   }
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  background-color: gray;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.dot.red {
+  background-color: lightcoral;
+}
+
+.dot.green {
+  background-color: lightgreen;
+}
+
+.dot-description {
+  display: none;
+}
+
+.dot-description.red {
+  color: lightcoral;
+}
+
+.dot-description.green {
+  color: rgb(0, 190, 0);
+}
+
+.dot:hover~.dot-description {
+  display: block;
+  margin-right: 10px;
+}
+
+.dot:hover {
+  cursor: pointer;
 }
 </style>

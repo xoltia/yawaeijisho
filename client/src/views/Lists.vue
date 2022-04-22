@@ -38,7 +38,7 @@
     <a class="btn danger" style="margin: 5px;" @click="confirmDelete">{{ $t('delete') }}</a>
     <a class="btn invert" style="margin: 5px;" @click="this.showDeleteModal = false">{{ $t('cancel') }}</a>
   </Modal>
-  <div class="slighly-narrow">
+  <div class="slightly-narrow">
     <div class="header">
       <h1>{{ $t('my-lists') }}</h1>
       <a class="btn" @click="this.showCreateModal = true">{{ $t('create-list') }}</a>
@@ -194,11 +194,5 @@ export default {
   .header .btn {
     margin: 0 0 15px 0;
   }
-}
-
-.slighly-narrow {
-  margin-top: 60px;
-  margin: auto;
-  max-width: 1300px;
 }
 </style>

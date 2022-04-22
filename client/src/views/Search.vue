@@ -7,6 +7,12 @@
     @selected="addWordToList"
     @close="showListSelector = false"
   />
+  <NoteBuilder
+    v-if="wordToProcess"
+    :script="funcStore.selectedFuncScript"
+    :wordId="wordToProcess"
+    @finished="wordToProcess = null"
+  />
   <div class="narrow">
     <h1 :class="[$i18n.locale !== 'ja' ? 'title with-sub' : 'title']">
       <text class="highlight">Ya</text>和英辞書
@@ -34,8 +40,10 @@
       :showListDelete="false"
       :hasActiveList="listStore.activeList !== null"
       :alreadyInActiveList="authStore.isAuthenticated ? checkIfInActiveList(word) : false"
+      :showAnkiActions="canAddAnkiNotes"
       @add-to-list="beginAddWordToList"
       @add-to-active="addWordToActiveList"
+      @add-anki-note="processWord"
     />
     <span style="display: block" v-if="words.length > 0">
       <text v-if="totalWordCount != words.length"
@@ -60,18 +68,25 @@ import Loader from '../components/Loader.vue';
 import Sentence from '../components/Sentence.vue';
 import Navbar from '../components/Navbar.vue';
 import ListSelector from '../components/ListSelector.vue';
+import NoteBuilder from '../components/NoteBuilder.vue';
 import { useAuthStore } from '../store/useAuthStore';
 import { useListStore } from '../store/useListStore';
+import { useFuncStore } from '../store/useFuncStore';
+import { useAnkiStore } from '../store/useAnkiStore';
 
 export default {
   name: 'Search',
   setup() {
     const listStore = useListStore();
     const authStore = useAuthStore();
+    const funcStore = useFuncStore();
+    const ankiStore = useAnkiStore();
 
     return {
       listStore,
-      authStore
+      authStore,
+      funcStore,
+      ankiStore
     };
   },
   data() {
@@ -87,7 +102,9 @@ export default {
       errorName: '',
       showListSelector: false,
       // Word (ID) currently waiting to be added to a list
-      wordToAdd: null
+      wordToAdd: null,
+      // Word ID which is currently being processed by the active function
+      wordToProcess: null
     }
   },
   components: {
@@ -96,7 +113,8 @@ export default {
     Loader,
     Sentence,
     Navbar,
-    ListSelector
+    ListSelector,
+    NoteBuilder
   },
   async mounted() {
     // Load tag data
@@ -106,6 +124,10 @@ export default {
     // Check query param for initial word search
     if (this.$route.query.q)
       await this.searchWord(this.$route.query.q);
+    
+    // Cannot get active func script without fetching funcs first
+    if (this.canAddAnkiNotes)
+      await this.funcStore.fetchFuncs();
   },
   computed: {
     hasNextPage() {
@@ -122,6 +144,9 @@ export default {
       if (!this.wordToAdd)
         return [];
       return this.words.find(word => word.id === this.wordToAdd).lists;
+    },
+    canAddAnkiNotes() {
+      return this.authStore.isAuthenticated && this.ankiStore.isInitialized && this.funcStore.hasSelectedFunc;
     }
   },
   methods: {
@@ -234,6 +259,9 @@ export default {
     },
     checkIfInActiveList(word) {
       return word.lists.includes(this.listStore.activeList);
+    },
+    processWord(wordId) {
+      this.wordToProcess = wordId;
     }
   }
 }

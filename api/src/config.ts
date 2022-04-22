@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { URL } from 'url';
 dotenv.config();
 
 type Port = string | number;
@@ -25,7 +26,9 @@ interface Config {
     cacheMax: number,
     cacheMaxAge: number,
     mecabLocation: string,
-    useShiftJISMecab: boolean
+    useShiftJISMecab: boolean,
+    funcboxUri: URL,
+    readyBeep: boolean
 };
 
 const config: Config = {
@@ -57,7 +60,9 @@ const config: Config = {
     },
     cacheMax: process.env.CACHE_MAX_COUNT ? Number(process.env.CACHE_MAX_COUNT) : 10000,
     cacheMaxAge: process.env.CACHE_MAX_AGE ? Number(process.env.CACHE_MAX_COUNT) : undefined,
-    useShiftJISMecab: process.env.MECAB_SHIFT_JIS === 'true'
+    useShiftJISMecab: process.env.MECAB_SHIFT_JIS === 'true',
+    funcboxUri: new URL(process.env.FUNCBOX_URI ? process.env.FUNCBOX_URI : 'ws://localhost:3090/ws'),
+    readyBeep: process.env.USE_READY_BEEP ? process.env.USE_READY_BEEP === 'true' : false
 };
 
 export default config;

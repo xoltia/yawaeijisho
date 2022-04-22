@@ -31,6 +31,9 @@
       <a class="action" @click="searchOnGoo">
         {{ $t('search-goo') }}
       </a>
+      <a v-show="showAnkiActions" class="action" @click="$emit('add-anki-note', word.id)">
+        {{ $t('add-anki-note') }}
+      </a>
     </div>
   </div>
 </template>
@@ -72,9 +75,14 @@ export default {
     showListDelete: {
       type: Boolean,
       default: false
+    },
+    // If false does not show add to anki action
+    showAnkiActions: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['add-to-list', 'add-to-active', 'delete-from-list'],
+  emits: ['add-to-list', 'add-to-active', 'delete-from-list', 'add-anki-note'],
   methods: {
     getTags(writing) {
       const [kanji, kana] = writing;
