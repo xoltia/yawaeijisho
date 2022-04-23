@@ -61,7 +61,7 @@ export default {
         "save": "Save",
         "create": "Create",
         "edit-name": "Edit Name",
-        "add-to-anki": "Add to Anki",
+        "add-anki-note": "Create Anki Note",
         "anki-invalid-note-err": "The note returned by the selected function does not match your selected Anki model.",
         "anki-note-created": "Note added to Anki.",
         "anki-add-error": "An error occurred while adding the note to Anki.",
