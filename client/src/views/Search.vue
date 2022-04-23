@@ -249,9 +249,10 @@ export default {
         this.sentenceWords = [];
       }
 
-      this.kanji = await this.getKanji(word);
-      // Reset words array
-      this.words = await this.getWords(word);
+      [this.kanji, this.words] = await Promise.all([
+        this.getKanji(word),
+        this.getWords(word)
+      ]);
 
       // Keep track of the last full search so that the next page method knows what to search
       this.lastSearch = word;
