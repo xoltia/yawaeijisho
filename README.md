@@ -65,6 +65,7 @@ Current prerequisites include
 - Properly configured environment variables
 
 ### Environment variables
+※ Non-exhaustive, view config.ts for all environment variables.
 | Variable        | Description                                                                                                                          | Default              |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | 
 | PORT            | Port which API server runs on (do not change if not production)                                                                      | production: 80 <br> dev: 3080 (same as front-end dev proxy)
