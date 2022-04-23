@@ -3,6 +3,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import config from './config';
 import { setup as setupJMDict } from './jmdict';
+import { setup as setupKanjiDic } from './kanjidic';
 import {
     baseRouter,
     authRouter,
@@ -28,11 +29,11 @@ if (config.isProduction) {
     app.use(express.static(config.publicFolder));
 }
 
-console.log('Preparing JMDict module')
+console.log('Loading JMDict and KanjiDic data...');
 
-setupJMDict()
+setupJMDict().then(setupKanjiDic)
     .then(() => {
-        console.log('JMDict module ready')
+        console.log('JMDict and KanjiDic data loaded.');
         mongoose.connect(config.db.connectionString, (err) => {
             if (err) {
                 console.log('Failed to connect to MongoDB. Current database config is:\n', JSON.stringify(config.db, null, 2));

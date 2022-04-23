@@ -1,15 +1,12 @@
-import * as fs from 'fs';
-import { promisify } from 'util';
-
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-
 /* IMPORTANT!
  * Indices should be located using original JMDict word data and NOT words list!
  * This allows for changing the structure of data in the words list without affecting how
  * indexing works. However, this means that the words list should map one-to-one with the
  * original list and the order should not be altered!
  */
+
+import { readJsonFile, writeJsonFile } from '../util/json';
+import { existsSync } from 'fs';
 
 export type XRef = [string, string, number] | [string, number | string] | [string];
 
@@ -96,7 +93,7 @@ export default class JMDictAPI<WordType, IndexNames extends string> {
     private _wordIds: Map<string, IndexNumber> = new Map();
 
     async loadFile(jmdictFileLocation: string): Promise<this> {
-        this._jmdict = await this._loadJSON(jmdictFileLocation);
+        this._jmdict = await readJsonFile(jmdictFileLocation);
 
         // Create map of word IDs
         for (let [index, word] of this._jmdict.words.entries())
@@ -123,7 +120,7 @@ export default class JMDictAPI<WordType, IndexNames extends string> {
     async createIndex(name: IndexNames, builder: IndexBuilder, sorter: IndexSorter, comparer: IndexKeyComparer): Promise<this> {
         // Load index from file if exists else build it
         const filename = name + '-index.json';
-        const hasIndexFile = this._useIndexFiles && fs.existsSync(filename);
+        const hasIndexFile = this._useIndexFiles && existsSync(filename);
         const index: IndexRecord[] = hasIndexFile ?
             await this._loadIndex(filename) : this._buildIndex(builder);
 
@@ -133,7 +130,7 @@ export default class JMDictAPI<WordType, IndexNames extends string> {
 
         // If it wanted to use index file but coudldn't, then create one
         if (!hasIndexFile && this._useIndexFiles)
-            await writeFile(filename, JSON.stringify(index));
+            await writeJsonFile(filename, JSON.stringify(index));
 
         this._indexes[name] = this._createSearchFunction(index, comparer);
         return this;
@@ -160,13 +157,8 @@ export default class JMDictAPI<WordType, IndexNames extends string> {
         return this._jmdict.tags;
     }
 
-    private async _loadJSON(filename: string): Promise<any> {
-        const fileContent = await readFile(filename);
-        return JSON.parse(fileContent.toString());
-    }
-
     private async _loadIndex(filename: string): Promise<Index> {
-        return await this._loadJSON(filename);
+        return await readJsonFile(filename);
     };
 
     private _buildIndex(builder: IndexBuilder): Index {

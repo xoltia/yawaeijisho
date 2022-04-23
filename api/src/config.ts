@@ -28,7 +28,8 @@ interface Config {
     mecabLocation: string,
     useShiftJISMecab: boolean,
     funcboxUri: URL,
-    readyBeep: boolean
+    readyBeep: boolean,
+    kanjidicLocation: string
 };
 
 const config: Config = {
@@ -62,7 +63,8 @@ const config: Config = {
     cacheMaxAge: process.env.CACHE_MAX_AGE ? Number(process.env.CACHE_MAX_COUNT) : undefined,
     useShiftJISMecab: process.env.MECAB_SHIFT_JIS === 'true',
     funcboxUri: new URL(process.env.FUNCBOX_URI ? process.env.FUNCBOX_URI : 'ws://localhost:3090/ws'),
-    readyBeep: process.env.USE_READY_BEEP ? process.env.USE_READY_BEEP === 'true' : false
+    readyBeep: process.env.USE_READY_BEEP ? process.env.USE_READY_BEEP === 'true' : false,
+    kanjidicLocation: process.env.KANJIDIC_LOCATION
 };
 
 export default config;

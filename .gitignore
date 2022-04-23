@@ -24,7 +24,7 @@ pnpm-debug.log*
 *.sw?
 
 # JMdict file(s)
-jmdict-*.json
+*.json
 
 # Saved index files
 *index*.json

@@ -3,7 +3,9 @@ import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import LRU from 'lru-cache';
+
 import JMDict from '../jmdict';
+import KanjiDic from '../kanjidic';
 import { parse } from '../mecab';
 import config from '../config';
 import { DefaultWordType } from '../jmdict/mapper';
@@ -43,6 +45,13 @@ export const getDefinitions = asyncHandler(async (req: AuthorizedRequest, res: R
 
     res.json(entries);
 });
+
+export function getKanji(req: Request, res: Response): void {
+    const { kanji } = req.params;
+
+    const kanjiList = KanjiDic.getAllKanjiFromString(kanji);
+    res.json(kanjiList);
+};
 
 export const getWordCount = (req: Request, res: Response) => {
     res.json(getEntries(req.params.word).length);

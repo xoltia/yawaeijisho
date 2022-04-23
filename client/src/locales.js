@@ -1,4 +1,4 @@
-{
+export default {
     "en": {
         "home-link": "Search",
         "about-link": "About",
@@ -65,7 +65,14 @@
         "anki-invalid-note-err": "The note returned by the selected function does not match your selected Anki model.",
         "anki-note-created": "Note added to Anki.",
         "anki-add-error": "An error occurred while adding the note to Anki.",
-        "func-error": "An error occurred while executing the word function."
+        "func-error": "An error occurred while executing the word function.",
+        "kanji": "Kanji",
+        "words": "Words",
+        "onyomi": "Onyomi",
+        "kunyomi": "Kunyomi",
+        "nanori": "Nanori",
+        "found-n": "{n} found",
+        "school-grade": "Grade {0}"
     },
     "ja": {
         "home-link": "検索ページ",
@@ -132,6 +139,22 @@
         "anki-invalid-note-err": "選択した関数が返したノートは選択したAnkiモデルと一致しません。",
         "anki-note-created": "ノートをAnkiに追加しました。",
         "anki-add-error": "ノートの追加中にエラーが発生しました。",
-        "func-error": "言葉関数の実行中にエラーが発生しました。"
+        "func-error": "言葉関数の実行中にエラーが発生しました。",
+        "kanji": "漢字",
+        "words": "言葉",
+        "onyomi": "音読み",
+        "kunyomi": "訓読み",
+        "nanori": "名乗り",
+        "found-n": "{n}個見つかりました",
+        "school-grade": (ctx) => {
+            const grade = ctx.list(0);
+            if (grade <= 6) {
+                return `小学${grade}年`;
+            } else if (grade <= 9) {
+                return `中学${grade - 6}年`;
+            } else {
+                return `高校${grade - 9}年`;
+            }
+        }
     }
 }

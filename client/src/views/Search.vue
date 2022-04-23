@@ -30,34 +30,59 @@
       :words="this.sentenceWords"
       @search-word="searchWord"
     />
-    <SearchResult
-      v-for="word in words"
-      :key="word.id"
-      :word="word"
-      :tagData="tagData"
-      :showListActions="authStore.isAuthenticated"
-      :showListAdd="true"
-      :showListDelete="false"
-      :hasActiveList="listStore.activeList !== null"
-      :alreadyInActiveList="authStore.isAuthenticated ? checkIfInActiveList(word) : false"
-      :showAnkiActions="canAddAnkiNotes"
-      @add-to-list="beginAddWordToList"
-      @add-to-active="addWordToActiveList"
-      @add-anki-note="processWord"
-    />
-    <span style="display: block" v-if="words.length > 0">
-      <text v-if="totalWordCount != words.length"
-        v-html="$t('n-words-shown', { totalWordCount, shownCount: words.length })"
-      />
-      <text v-else
-        v-html="$t('all-words-shown')"
-      />
-    </span>
-    <span v-if="this.errorName">
-      {{$t(this.errorName)}}
-    </span>
-    <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">{{ $t('load-more') }}</button>
     <Loader v-if="loadingWords"/>
+  </div>
+  <div :class="[hasKanji ? 'slightly-narrow results-container' : 'narrow']">
+    <div :class="[hasKanji ? 'words-results-container' : '']">
+      <div v-if="words.length > 0 && hasKanji">
+        <h1 style="display: inline-block">{{ $t('words') }}</h1>
+        <span style="font-size: 18px; font-weight: 400" v-if="words.length > 0 && hasKanji">
+          ー {{ $t('found-n', { n: totalWordCount }) }}
+        </span>
+      </div>
+      <SearchResult
+        v-for="word in words"
+        :key="word.id"
+        :word="word"
+        :tagData="tagData"
+        :showListActions="authStore.isAuthenticated"
+        :showListAdd="true"
+        :showListDelete="false"
+        :hasActiveList="listStore.activeList !== null"
+        :alreadyInActiveList="authStore.isAuthenticated ? checkIfInActiveList(word) : false"
+        :showAnkiActions="canAddAnkiNotes"
+        @add-to-list="beginAddWordToList"
+        @add-to-active="addWordToActiveList"
+        @add-anki-note="processWord"
+      />
+      <span style="display: block; margin-top: 15px" v-if="words.length > 0">
+        <text v-if="totalWordCount != words.length"
+          v-html="$t('n-words-shown', { totalWordCount, shownCount: words.length })"
+        />
+        <text v-else
+          v-html="$t('all-words-shown')"
+        />
+      </span>
+      <span v-if="this.errorName">
+        {{$t(this.errorName)}}
+      </span>
+      <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">{{ $t('load-more') }}</button>
+    </div>
+    <div v-if="hasKanji" class="kanji-results-container">
+      <h1 style="display: inline-block">{{ $t('kanji') }}</h1>
+      <span style="font-size: 18px; font-weight: 400" v-if="words.length > 0 && hasKanji">
+        ー {{ $t('found-n', { n: kanji.length }) }}
+      </span>
+      <Kanji v-for="k of kanji" :key="k.literal"
+        :literal="k.literal"
+        :meanings="k.meanings"
+        :onyomi="k.onyomi"
+        :kunyomi="k.kunyomi"
+        :nanori="k.nanori"
+        :jlpt="k.jlpt"
+        :gradeLevel="k.gradeLevel"
+      />
+    </div>
   </div>
 </template>
 
@@ -69,6 +94,7 @@ import Sentence from '../components/Sentence.vue';
 import Navbar from '../components/Navbar.vue';
 import ListSelector from '../components/ListSelector.vue';
 import NoteBuilder from '../components/NoteBuilder.vue';
+import Kanji from '../components/Kanji.vue';
 import { useAuthStore } from '../store/useAuthStore';
 import { useListStore } from '../store/useListStore';
 import { useFuncStore } from '../store/useFuncStore';
@@ -92,6 +118,7 @@ export default {
   data() {
     return {
       words: [],
+      kanji: [],
       loadingWords: false,
       tagData: {},
       lastSearch: null,
@@ -114,7 +141,8 @@ export default {
     Sentence,
     Navbar,
     ListSelector,
-    NoteBuilder
+    NoteBuilder,
+    Kanji
   },
   async mounted() {
     // Load tag data
@@ -147,6 +175,9 @@ export default {
     },
     canAddAnkiNotes() {
       return this.authStore.isAuthenticated && this.ankiStore.isInitialized && this.funcStore.hasSelectedFunc;
+    },
+    hasKanji() {
+      return this.kanji.length > 0;
     }
   },
   methods: {
@@ -163,9 +194,14 @@ export default {
       const response = await this.$http.get(`/api/wakachi/${sentence}`);
       return response.data;
     },
+    async getKanji(sentence) {
+      const response = await this.$http.get(`/api/kanji/${sentence}`);
+      return response.data;
+    },
     error(errorName) {
       // Reset state
       this.words = [];
+      this.kanji = [];
       this.sentenceWords = [];
       this.lastSearch = '';
       this.loadingWords = false;
@@ -185,6 +221,7 @@ export default {
       // Reset state so old results don't show while loading
       this.page = 1;
       this.words = [];
+      this.kanji = [];
       this.errorName = '';
       this.loadingWords = true;
 
@@ -213,6 +250,8 @@ export default {
         // Clear sentence words once a single word is searched
         this.sentenceWords = [];
       }
+
+      this.kanji = await this.getKanji(word);
 
       // Keep track of the last full search so that the next page method knows what to search
       this.lastSearch = word;
@@ -268,6 +307,37 @@ export default {
 </script>
 
 <style scoped>
+.results-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.words-results-container {
+  margin: 1rem;
+  width: 80%;
+}
+
+.kanji-results-container {
+  margin: 1rem;
+  width: 20%;
+}
+
+@media screen and (max-width: 1300px) {
+  .results-container {
+    flex-direction: column;
+  }
+
+  .words-results-container {
+    width: 100%;
+    margin: 0;
+  }
+
+  .kanji-results-container {
+    width: 100%;
+    margin: 0;
+  }
+}
+
 .title {
   font-size: 100px;
   font-weight: 900;
