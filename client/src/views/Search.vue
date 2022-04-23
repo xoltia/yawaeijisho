@@ -32,7 +32,7 @@
     />
     <Loader v-if="loadingWords"/>
   </div>
-  <div :class="[hasKanji ? 'slightly-narrow results-container' : 'narrow']">
+  <div :class="['narrow', hasKanji ? 'results-container' : '']">
     <div :class="[hasKanji ? 'words-results-container' : '']">
       <div v-if="words.length > 0 && hasKanji">
         <h1 style="display: inline-block">{{ $t('words') }}</h1>
@@ -54,6 +54,7 @@
         @add-to-list="beginAddWordToList"
         @add-to-active="addWordToActiveList"
         @add-anki-note="processWord"
+        :forceCompactStyle="hasKanji"
       />
       <span style="display: block; margin-top: 15px" v-if="words.length > 0">
         <text v-if="totalWordCount != words.length"
@@ -311,19 +312,21 @@ export default {
 .results-container {
   display: flex;
   flex-direction: row;
+  text-align: left;
+  max-width: 1000px;
 }
 
 .words-results-container {
-  margin: 1rem;
-  width: 80%;
+  margin: 0 2rem;
+  width: 75%;
 }
 
 .kanji-results-container {
-  margin: 1rem;
-  width: 20%;
+  margin: 0 2rem;
+  width: 25%;
 }
 
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1000px) {
   .results-container {
     flex-direction: column;
   }

@@ -1,6 +1,6 @@
 <template>
-  <div class="result">
-    <div class="word">
+  <div class="result" :class="[forceCompactStyle ? 'compact-mode' : '']">
+    <div class="word" :class="[forceCompactStyle ? 'compact-mode' : '']">
       <div class="sense-container" v-for="sense in word.senses" :key="sense.writings">
         <Writing v-for="writing in sense.writings"
           :key="writing"
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="actions">
+    <div class="actions" :class="[forceCompactStyle ? 'compact-mode' : '']">
       <a v-show="showListActions && showListAdd && hasActiveList" :class="['action', alreadyInActiveList ? 'disabled': '']" @click="addToActive">
         {{ alreadyInActiveList ? $t('already-in-active') : $t('add-to-active') }}
       </a>
@@ -80,6 +80,10 @@ export default {
     showAnkiActions: {
       type: Boolean,
       default: false
+    },
+    forceCompactStyle: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['add-to-list', 'add-to-active', 'delete-from-list', 'add-anki-note'],
@@ -119,7 +123,7 @@ export default {
   border-bottom: 1px solid #d0dbe6;
 }
 
-.result .word {
+.word {
   width: 90%;
 }
 
@@ -164,10 +168,33 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: left;
+    text-align: left;
+    flex-wrap: wrap;
   }
 
   .action {
     margin: 0px 10px 20px 0;
   }
+}
+
+/* Do everything that is normally done in response to screen resize no matter screen size */
+.result.compact-mode {
+  flex-direction: column;
+}
+
+.word.compact-mode, .actions.compact-mode {
+  width: 100%;
+}
+
+.actions.compact-mode {
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  text-align: left;
+  flex-wrap: wrap;
+}
+
+.actions.compact-mode > .action {
+  margin: 0px 10px 20px 0;
 }
 </style>
