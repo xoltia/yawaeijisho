@@ -68,7 +68,7 @@
       </span>
       <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">{{ $t('load-more') }}</button>
     </div>
-    <div v-if="hasKanji" class="kanji-results-container">
+    <div v-if="hasKanji && !loadingWords" class="kanji-results-container">
       <h1 style="display: inline-block">{{ $t('kanji') }}</h1>
       <span style="font-size: 18px; font-weight: 400" v-if="words.length > 0 && hasKanji">
         ー {{ $t('found-n', { n: kanji.length }) }}
@@ -227,11 +227,9 @@ export default {
 
       // See how many total matches there are
       this.totalWordCount = await this.getWordsCount(word);
-      // Reset words array
-      this.words = await this.getWords(word);
 
       // Didn't find any words try to search as sentence
-      if (this.words.length === 0) {
+      if (this.totalWordCount === 0) {
         // If this search is already comming from a sentence search then stop
         if (final) {
           return this.error('nothing-found-err');
@@ -252,6 +250,8 @@ export default {
       }
 
       this.kanji = await this.getKanji(word);
+      // Reset words array
+      this.words = await this.getWords(word);
 
       // Keep track of the last full search so that the next page method knows what to search
       this.lastSearch = word;
