@@ -1,7 +1,7 @@
 # Yawaeijisho
 
 <img src="https://i.imgur.com/xsYUvO1.png"
-     width="500">
+     width="800">
      
 Yet another Japanese-English dictionary
 
