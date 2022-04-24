@@ -36,7 +36,7 @@
     <div :class="[hasKanji ? 'words-results-container' : '']">
       <div v-if="words.length > 0 && hasKanji">
         <h1 style="display: inline-block">{{ $t('words') }}</h1>
-        <span style="font-size: 18px; font-weight: 400" v-if="words.length > 0 && hasKanji">
+        <span style="font-size: 15px; font-weight: 400" v-if="words.length > 0 && hasKanji">
           ー {{ $t('found-n', { n: totalWordCount }) }}
         </span>
       </div>
@@ -71,7 +71,7 @@
     </div>
     <div v-if="hasKanji && !loadingWords" class="kanji-results-container">
       <h1 style="display: inline-block">{{ $t('kanji') }}</h1>
-      <span style="font-size: 18px; font-weight: 400" v-if="words.length > 0 && hasKanji">
+      <span style="font-size: 15px; font-weight: 400" v-if="words.length > 0 && hasKanji">
         ー {{ $t('found-n', { n: kanji.length }) }}
       </span>
       <Kanji v-for="k of kanji" :key="k.literal"
