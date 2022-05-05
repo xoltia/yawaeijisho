@@ -6,6 +6,7 @@ import LRU from 'lru-cache';
 
 import JMDict from '../jmdict';
 import KanjiDic from '../kanjidic';
+import Tatoeba from '../tatoeba';
 import { parse } from '../mecab';
 import config from '../config';
 import { DefaultWordType } from '../jmdict/mapper';
@@ -51,6 +52,12 @@ export function getKanji(req: Request, res: Response): void {
 
     const kanjiList = KanjiDic.getAllKanjiFromString(kanji);
     res.json(kanjiList);
+};
+
+export function getSentencesWithWord(req: Request, res: Response): void {
+    const { word } = req.params;
+    const sentences = Tatoeba.getSentencesByWord(word);
+    res.json(sentences);
 };
 
 export const getWordCount = (req: Request, res: Response) => {

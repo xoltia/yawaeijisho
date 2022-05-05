@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
 
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
+export const readFileAsync = promisify(readFile);
+export const writeFileAsync = promisify(writeFile);
 
 export async function readJsonFile(filename: string): Promise<any> {
     const fileContent = await readFileAsync(filename, 'utf8');

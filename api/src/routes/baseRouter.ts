@@ -28,6 +28,7 @@ router.get('/define/:word', optionalAuthorized, [
     query('size').isInt({ min: 1 }).default(config.maxPageSize)
 ], baseController.getDefinitions);
 router.get('/kanji/:kanji', baseController.getKanji);
+router.get('/sentences/:word', baseController.getSentencesWithWord);
 router.get('/wakachi/:phrase', baseController.wakachi);
 
 export default router;

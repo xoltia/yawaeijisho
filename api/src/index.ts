@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import config from './config';
 import { setup as setupJMDict } from './jmdict';
 import { setup as setupKanjiDic } from './kanjidic';
+import { setup as setupTatoeba } from './tatoeba';
 import {
     baseRouter,
     authRouter,
@@ -29,11 +30,11 @@ if (config.isProduction) {
     app.use(express.static(config.publicFolder));
 }
 
-console.log('Loading JMDict and KanjiDic data...');
+console.log('Loading data files...');
 
-setupJMDict().then(setupKanjiDic)
+Promise.all([setupJMDict(), setupKanjiDic(), setupTatoeba()])
     .then(() => {
-        console.log('JMDict and KanjiDic data loaded.');
+        console.log('Data files loaded.');
         mongoose.connect(config.db.connectionString, (err) => {
             if (err) {
                 console.log('Failed to connect to MongoDB. Current database config is:\n', JSON.stringify(config.db, null, 2));

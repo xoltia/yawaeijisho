@@ -32,14 +32,8 @@
     />
     <Loader v-if="loadingWords"/>
   </div>
-  <div :class="['narrow', hasKanji ? 'results-container' : '']">
-    <div :class="[hasKanji ? 'words-results-container' : '']">
-      <div v-if="words.length > 0 && hasKanji">
-        <h1 style="display: inline-block">{{ $t('words') }}</h1>
-        <span style="font-size: 15px; font-weight: 400" v-if="words.length > 0 && hasKanji">
-          ー {{ $t('found-n', { n: totalWordCount }) }}
-        </span>
-      </div>
+  <div :class="['narrow', (hasKanji || hasSentences) ? 'results-container' : '']">
+    <div :class="[(hasKanji || hasSentences) ? 'words-results-container' : '']">
       <SearchResult
         v-for="word in words"
         :key="word.id"
@@ -54,26 +48,30 @@
         @add-to-list="beginAddWordToList"
         @add-to-active="addWordToActiveList"
         @add-anki-note="processWord"
-        :forceCompactStyle="hasKanji"
+        :forceCompactStyle="(hasKanji || hasSentences)"
       />
-      <span style="display: block; margin-top: 15px" v-if="words.length > 0">
+      <span style="display: block; margin: 15px 0;" v-if="words.length > 0">
         <text v-if="totalWordCount != words.length"
           v-html="$t('n-words-shown', { totalWordCount, shownCount: words.length })"
         />
         <text v-else
           v-html="$t('all-words-shown')"
         />
+        <text v-if="totalWordCount != words.length">
+           ー <button v-if="hasNextPage" class="next-pg-btn" @click="loadNextPage()">{{ $t('load-more') }}</button>
+        </text>
       </span>
       <span v-if="this.errorName">
         {{$t(this.errorName)}}
       </span>
-      <button v-if="hasNextPage" id="next-pg-btn" @click="loadNextPage()">{{ $t('load-more') }}</button>
     </div>
-    <div v-if="hasKanji && !loadingWords" class="kanji-results-container">
-      <h1 style="display: inline-block">{{ $t('kanji') }}</h1>
-      <span style="font-size: 15px; font-weight: 400" v-if="words.length > 0 && hasKanji">
-        ー {{ $t('found-n', { n: kanji.length }) }}
-      </span>
+    <div v-if="(hasKanji || hasSentences) && !loadingWords" class="kanji-results-container">
+      <div v-if="hasKanji">
+        <h2 style="display: inline">{{ $t('kanji') }}</h2>
+        <i style="font-size: 15px; font-weight: 400; display: inline-block;">
+          ー {{ $t('found-n', { n: kanji.length }) }}
+        </i>
+      </div>
       <Kanji v-for="k of kanji" :key="k.literal"
         :literal="k.literal"
         :meanings="k.meanings"
@@ -83,6 +81,19 @@
         :jlpt="k.jlpt"
         :gradeLevel="k.gradeLevel"
       />
+      <div v-if="hasSentences">
+        <h2 style="display: inline">{{ $t('sentences') }}</h2>
+        <i style="font-size: 15px; font-weight: 400; display: inline-block; margin-bottom: 20px;">
+          ー {{ $t('found-n', { n: sentences.length }) }}
+        </i>
+        <div
+          v-for="sentence of sentences.slice(0, (sentencePage + 1) * 5)"
+          :key="sentence"
+          style="margin-bottom: 20px; font-size: 14px">
+          {{ sentence }}
+        </div>
+        <button class="next-pg-btn" v-if="(sentences.length - (sentencePage + 1) * 5) > 0" @click="sentencePage++">{{ $t('load-more') }}</button>
+      </div>
     </div>
   </div>
 </template>
@@ -120,6 +131,8 @@ export default {
     return {
       words: [],
       kanji: [],
+      sentences: [],
+      sentencePage: 0,
       loadingWords: false,
       tagData: {},
       lastSearch: null,
@@ -179,6 +192,9 @@ export default {
     },
     hasKanji() {
       return this.kanji.length > 0;
+    },
+    hasSentences() {
+      return this.sentences.length > 0;
     }
   },
   methods: {
@@ -199,10 +215,15 @@ export default {
       const response = await this.$http.get(`/api/kanji/${sentence}`);
       return response.data;
     },
+    async getSentences(word) {
+      const response = await this.$http.get(`/api/sentences/${word}`);
+      return response.data;
+    },
     error(errorName) {
       // Reset state
       this.words = [];
       this.kanji = [];
+      this.sentences = [];
       this.sentenceWords = [];
       this.lastSearch = '';
       this.loadingWords = false;
@@ -223,6 +244,7 @@ export default {
       this.page = 1;
       this.words = [];
       this.kanji = [];
+      this.sentences = [];
       this.errorName = '';
       this.loadingWords = true;
 
@@ -250,9 +272,10 @@ export default {
         this.sentenceWords = [];
       }
 
-      [this.kanji, this.words] = await Promise.all([
+      [this.kanji, this.words, this.sentences] = await Promise.all([
         this.getKanji(word),
-        this.getWords(word)
+        this.getWords(word),
+        this.getSentences(word)
       ]);
 
       // Keep track of the last full search so that the next page method knows what to search
@@ -313,17 +336,16 @@ export default {
   display: flex;
   flex-direction: row;
   text-align: left;
-  max-width: 1000px;
+  max-width: 900px;
 }
 
 .words-results-container {
-  margin: 0 2rem;
-  width: 75%;
+  width: 70%;
 }
 
 .kanji-results-container {
-  margin: 0 2rem;
-  width: 25%;
+  padding: 15px 0px 15px 30px;
+  width: 30%;
 }
 
 @media screen and (max-width: 1000px) {
@@ -333,12 +355,12 @@ export default {
 
   .words-results-container {
     width: 100%;
-    margin: 0;
   }
 
   .kanji-results-container {
+    margin-top: 30px;
     width: 100%;
-    margin: 0;
+    padding: 0;
   }
 }
 
@@ -365,7 +387,7 @@ export default {
   margin-top: 0;
 }
 
-#next-pg-btn {
+.next-pg-btn {
   background: none;
   border: none;
   padding: 0;

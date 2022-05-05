@@ -29,7 +29,9 @@ interface Config {
     useShiftJISMecab: boolean,
     funcboxUri: URL,
     readyBeep: boolean,
-    kanjidicLocation: string
+    kanjidicLocation: string,
+    tatoebaLocation: string,
+    tatoebaLookupTableLocation: string,
 };
 
 const config: Config = {
@@ -64,7 +66,9 @@ const config: Config = {
     useShiftJISMecab: process.env.MECAB_SHIFT_JIS === 'true',
     funcboxUri: new URL(process.env.FUNCBOX_URI ? process.env.FUNCBOX_URI : 'ws://localhost:3090/ws'),
     readyBeep: process.env.USE_READY_BEEP ? process.env.USE_READY_BEEP === 'true' : false,
-    kanjidicLocation: process.env.KANJIDIC_LOCATION
+    kanjidicLocation: process.env.KANJIDIC_LOCATION,
+    tatoebaLocation: process.env.TATOEBA_LOCATION,
+    tatoebaLookupTableLocation: process.env.TATOEBA_LOOKUP_TABLE_LOCATION
 };
 
 export default config;

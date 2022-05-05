@@ -72,7 +72,8 @@ export default {
         "kunyomi": "Kunyomi",
         "nanori": "Nanori",
         "found-n": "{n} found",
-        "school-grade": "Grade {0}"
+        "school-grade": "Grade {0}",
+        "sentences": "Sentences",
     },
     "ja": {
         "home-link": "検索ページ",
@@ -155,6 +156,7 @@ export default {
             } else {
                 return `高校${grade - 9}年`;
             }
-        }
+        },
+        "sentences": "例文",
     }
 }
