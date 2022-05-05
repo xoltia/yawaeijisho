@@ -146,7 +146,13 @@ export default {
         "onyomi": "音読み",
         "kunyomi": "訓読み",
         "nanori": "名乗り",
-        "found-n": "{n}個見つかりました",
+        "found-n": (ctx) => {
+            let number = String(ctx.named('n'));
+            let doubleWidthNumber = number.replace(/\d/g, (match) => {
+                return String.fromCharCode(match.charCodeAt(0) + 0xfee0);
+            });
+            return `${doubleWidthNumber}個見つかりました`;
+        },
         "school-grade": (ctx) => {
             const grade = ctx.list(0);
             if (grade <= 6) {
